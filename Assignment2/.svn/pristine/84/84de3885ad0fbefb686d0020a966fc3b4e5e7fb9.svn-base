@@ -1,0 +1,134 @@
+package driver;
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+
+import java.util.Arrays;
+import java.util.List;
+
+
+/**
+ * Command in Jshell that prints a Dir's contents in the FileSystem
+ * 
+ * @author Muizz Uddin Ahmed
+ * @version 1.0
+ */
+public class DirectoryList extends Command {
+  /**
+   * Stores the documentation for the given command ls
+   */
+  private String documentation = "\n Description: \n\n Prints the contents"
+      + " of the given directory (or the current directory if the user"
+      + " does not input one).\n\n Examples: \n\n ls\n photos songs games\n\n"
+      + " ls /photos/2018 \n 2018: beach cottage \n\n "
+      + "Possible Exceptions: \n\n invalidPathException \n";
+  
+  /**
+   * Prints all directories and files inside the given directory.
+   * @param dir: contains the directory thats going to print all of its dirs
+   *             and its files.
+   */
+  private String ls(Object dir_or_file) {
+    String contents = "";
+    if (dir_or_file instanceof File) {
+      contents = ((File) dir_or_file).getName();
+    } else if (dir_or_file instanceof Directory) {
+      // get the list of all directories and list of all files
+      List<File> dir_files = ((Directory) dir_or_file).getAllFiles();
+      List<Directory> subDirs = ((Directory) dir_or_file).getSubDirectories();
+      // Append each file and directory to the string dir_contents
+      for (File file : dir_files) {
+        contents = contents + " " + file.getName();
+      }
+      for (Directory directory : subDirs) {
+        contents = contents + " " + directory.getName();
+      }
+      // Print the string with all of the directory contents
+      return (((Directory) dir_or_file).getName() + ":" + contents + "\n");
+    }
+    return contents;
+  }
+  
+  private String recLs(Object dir_or_file) {
+    String ls = "";
+    if (dir_or_file instanceof File) {
+      return ((File)dir_or_file).getName();
+    } else {
+      // get the list of all directories and list of all files
+      Directory dir = ((Directory) dir_or_file);
+      List<File> dir_files = dir.getAllFiles();
+      List<Directory> subDirs = dir.getSubDirectories();
+      ls = ls + FileSystem.tracePath(dir, "") + ":";
+      for (File file : dir_files) {
+        ls = ls + " " + file.getName();
+      } for (Directory subDir: subDirs) {
+        ls = ls + "\n^" + recLs(subDir);
+      }
+    }
+    return ls;
+  }
+  
+  /**
+   * Runs the command whenever ls is called from Jshell
+   * @param Input: Takes in the input from after the command.
+   */
+  public String run_command(String input) {
+    // Remove whitespace from both front and back then split into diff paths
+    String[] paths = input.trim().replaceAll(" +", " ").split(" ");
+    String ls = "";
+    // check if input is empty or not
+    if (input.length() == 0) {
+      // Print current directory contents if no path is given
+      ls = this.ls(FileSystem.get_cur_dir());
+    } else if (paths[0].matches("-[Rr]") && paths.length == 1) {
+      ls = this.recLs(FileSystem.get_cur_dir());
+    } else {
+      if (paths[0].matches("-[Rr]")){
+        paths = Arrays.copyOfRange(paths, 1, paths.length);
+        for (String path : paths) {
+          Object dir_or_file = FileSystem.pathToDirorFile(path);
+          ls = ls + this.recLs(dir_or_file);
+        }
+      } else {
+        // loop through each path until all paths have been addressed
+        for (String path : paths) {
+          Object dir_or_file = FileSystem.pathToDirorFile(path);
+          ls = ls + this.ls(dir_or_file);
+        }
+      }
+    }
+    return ls;
+  }
+
+  @Override
+  public String print_documentation() {
+    // TODO Auto-generated method stub
+    return(documentation);
+  }
+}

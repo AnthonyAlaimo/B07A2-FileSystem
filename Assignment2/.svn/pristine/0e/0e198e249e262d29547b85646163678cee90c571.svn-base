@@ -1,0 +1,9 @@
+Class Name: CommandDocumentation
+Parent Class(if any):
+Subclasses(if any):
+
+Responsibilities: 
+* Displays the documentation for a indicated command
+
+Collaborators:
+* JShell 

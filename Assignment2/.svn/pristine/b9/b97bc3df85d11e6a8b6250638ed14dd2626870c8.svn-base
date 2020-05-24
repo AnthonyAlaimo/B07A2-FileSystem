@@ -1,0 +1,21 @@
+package driver;
+
+import java.util.HashMap;
+
+public class Command {
+  public static HashMap<String, Object> commands = new HashMap<>();
+  
+  public static void add_Command(String command, Object instance) {
+    commands.put(command, instance);
+  }
+  
+  public Object execute(String command) {
+    return (commands.get(command));
+  }
+
+  public void run_command(String input) {
+    // TODO Auto-generated method stub
+    System.out.println("Fail");
+  }
+
+}

@@ -1,0 +1,38 @@
+package driver;
+import java.util.List;
+import java.util.ArrayList;
+import driver.FileSystem;
+
+public class DirectoryMake {
+  /**
+   * Takes an ArrayList of all directories' and modifies the FileSystem
+   * with respect to the desired paths (relative, full or none) by 
+   * creating directories at the specified path.
+   * 
+   * @param dirs: Takes a String, with each index containing a path 
+   *              and the directory that needs to be made at the end.
+   * @return None
+   * 
+   */
+  public static void mkdir(ArrayList<String> dirs) {
+    for (String path : dirs) {
+      if (path.indexOf("/") != -1 && path.lastIndexOf("/") != 0) {
+        String[] path_dirs = path.split("/");
+        String new_name = path_dirs[path_dirs.length-1];
+        String parent_path = path.substring(0, path.length()-new_name.length()-1);
+        Directory new_dir = new Directory(new_name);
+        Directory parent_dir = FileSystem.path_to_dir(parent_path);
+        if (parent_dir != null) {
+          parent_dir.addDirectory(new_dir);
+        }
+      } else if (path.indexOf("/") != -1) {
+        FileSystem.getRoot().addDirectory(new Directory(path));
+      }
+      else {
+        FileSystem.get_cur_dir().addDirectory(new Directory(path));
+      }
+      
+    }
+  }
+  
+}

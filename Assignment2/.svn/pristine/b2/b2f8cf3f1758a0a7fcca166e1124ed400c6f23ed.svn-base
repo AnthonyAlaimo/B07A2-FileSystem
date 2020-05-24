@@ -1,0 +1,76 @@
+package driver;
+import java.util.ArrayList;
+import java.util.List;
+import driver.File;
+
+public class Directory {
+  private List<Directory> directories;
+  private List<File> files;
+  private Directory parent;
+  private String name;
+  
+  // Constructor Method
+  public Directory(String name) {
+    this.files = new ArrayList<>();
+    this.directories = new ArrayList<>();
+    this.parent = null;
+    this.name = name;
+  }
+  
+  public void set_Parent(Directory parent) {
+    // Sets the Parent directory to the current directory
+    this.parent = parent;
+  }
+  
+  public Directory get_Parent() {
+    // Returns reference to the parent Directory of current Directory
+    return this.parent;
+  }
+  
+  public void addFile(File file) {
+    // Append file to list of files in this directory
+    this.files.add(file);
+  }
+  
+  public void addDirectory(Directory dir) {
+    // Append directory to this directory
+    this.directories.add(dir);
+    dir.set_Parent(this);
+  }
+  
+  public Directory getSubDirectory(String dir_name){
+    // Traverse the Directory list to find the appropriate directory
+    for (Directory directory : this.directories) {
+      if (directory.getName().equals(dir_name)) {
+        return directory;
+      }
+    }
+    // Return null object if the directory does not exist
+    return null;
+  }
+  
+  public File getFile(String file_name){
+    // Traverse the files list to find the appropriate file in directory
+    for (File file : this.files) {
+      if (file.getName().equals(file_name)) {
+        return file;
+      }
+    }
+    // Return null object if file does not exist
+    return null;
+  }
+  
+  public List<File> getAllFiles(){
+    return this.files;
+  }
+  
+  public List<Directory> getSubDirectories(){
+    return this.directories;
+  }
+
+  public String getName() {
+    // Gets the name of the referenced Directory
+    return this.name;
+  }
+
+}

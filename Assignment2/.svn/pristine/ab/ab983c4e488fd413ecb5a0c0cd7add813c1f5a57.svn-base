@@ -1,0 +1,27 @@
+package driver;
+
+public class EchoAppend {
+	public static void echo2(String text, String file) {
+		if (Validator.valid_file(FileSystem.get_cur_dir(), file) == true) {
+			if (Validator.valid_file(FileSystem.get_cur_dir(), file) == true) {
+				// sets the text of the indicated file with the new indicated string
+				for (File f:FileSystem.get_cur_dir().getAllFiles()) {
+					if (f.getName() == file) {
+						f.setText(text);
+						// gets the current texts of the indicated file
+						String currentStr = f.getText();
+						// combines the current text with the new indicated string
+						String NewStr = currentStr + text;
+						// sets the text of the indicated file to the new combined string.
+						f.setText(NewStr);
+						break;
+					}
+				}
+			}
+		}
+		else {
+			//TODO exception handler class called for correct exception
+		}
+	}
+
+}

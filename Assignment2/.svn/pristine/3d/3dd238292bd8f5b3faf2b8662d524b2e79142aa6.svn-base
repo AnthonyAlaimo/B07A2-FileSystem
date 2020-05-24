@@ -1,0 +1,56 @@
+package driver;
+
+/**
+ * This class corresponds to the cd method, which changes the current
+ * working directory to the directory DIR, when an input in the format,
+ * "cd DIR", is entered.
+ */
+public class DirectoryChange extends Command {
+	private String documentation = "\n Description: \n\n Changes the current"
+			+ " directory to the given directory (can be either a relative or"
+			+ " full path). \n\n Possible Exceptions:";
+
+	/**
+	 * This method calls the changeDirectory method in this class,
+	 * DirectoryChange, with the String input as its only parameter.
+	 * 
+	 * @param input The input entered by the user to be used for the cd
+	 * command.
+	 */
+	public void run_command(String input) {
+		// Removes all spaces in the input string
+		input = input.trim().replaceAll(" +", "");
+		// Call the changeDirectory method with the given input
+		this.changeDirectory(input);
+
+	}
+	
+	/**
+	 * This method changes the current working directory to the directory
+	 * indicated by the String input, whether relative to the current
+	 * directory, or to the root.
+	 * 
+	 * @param input A String representation of the desired new current working
+	 * directory.
+	 */
+	private void changeDirectory(String input) {
+		/* Find the desired directory by calling the path_to_dir method
+		 * with the inputed path as its parameter
+		 */
+		Object newDir = FileSystem.pathToDirorFile(input);
+		/* Set the current working directory to the new directory found by
+		 * path_to_dir
+		 */
+		FileSystem.set_cur_dir((Directory) newDir);
+	}
+
+	/**
+	 * This method prints the documentation corresponding to the cd command,
+	 * explaining the necessary syntax of inputs and what the command does.
+	 */
+	@Override
+	public void print_documentation() {
+		// TODO Auto-generated method stub
+		System.out.println(documentation);
+	}
+}

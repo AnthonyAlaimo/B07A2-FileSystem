@@ -1,0 +1,54 @@
+package driver;
+
+/**
+ * This class corresponds to the pushd method, which pushes the current
+ * working directory onto the DirectoryStack, and changes the current working
+ * directory to DIR when an input in the format, "popd DIR", is entered.
+ */
+public class DirectoryPush extends Command {
+	private String documentation = "\n Description: \n\n Saves the current"
+			+ " directory and changes the given directory to the current"
+			+ " working directory.\n\n Examples:\n\n pushd\n\n Exceptions:\n";
+
+	/**
+	 * This method calls the pushDirectory method in this class,
+	 * DirectoryPush, using String input to find the desired directory, which
+	 * will be used as pushDirectory's only parameter.
+	 * 
+	 * @param input The input entered by the user to be used for the pushd
+	 * command.
+	 */
+	public void run_command(String input) {
+		// Removes all spaces in the input string
+		input = input.trim().replaceAll(" +", "");
+		// Find the Directory corresponding to the inputed path
+		Directory push = (Directory) FileSystem.pathToDirorFile(input);
+		// Call pushDirectory method with the Directory found
+		this.pushDirectory(push);
+	}
+
+	/**
+	 * This method pushes the current working directory onto the
+	 * DirectoryStack, and then sets the current working directory to
+	 * be the directory given to the method as its input, dir.
+	 * 
+	 * @param dir The directory found in run_command that is the new desired
+	 * current working directory after the current one is pushed on the stack.
+	 */
+	private void pushDirectory(Directory dir) {
+		// Push the current working directory onto the directory stack
+		DirectoryStack.push(FileSystem.get_cur_dir());
+		// Set the current directory to the desired directory dir
+		FileSystem.set_cur_dir(dir);
+	}
+
+	/**
+	 * This method prints the documentation corresponding to the pushd command,
+	 * explaining the necessary syntax of inputs and what the command does.
+	 */
+	@Override
+	public void print_documentation() {
+		// TODO Auto-generated method stub
+		System.out.println(documentation);
+	}
+}

@@ -1,0 +1,8 @@
+Class Name: CommandDocumentation
+Parent Class(if any): Command
+Subclasses(if any):
+
+Responsibilities: 
+* Displays the documentation for a indicated command
+
+Collaborators:

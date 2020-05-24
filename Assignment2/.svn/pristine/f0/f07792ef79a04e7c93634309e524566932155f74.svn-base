@@ -1,0 +1,87 @@
+package driver;
+
+public class FileSystem {
+  private static Directory root = new Directory("/");
+  private static Directory cur_dir = root;
+  
+  public static Directory getRoot() {
+    return root;
+  }
+  
+  public static Directory get_cur_dir() {
+    return cur_dir;
+  }
+  
+  public static void set_cur_dir(Directory dir) {
+    boolean is_dir = false;
+    Directory temp_dir = dir;
+    if (dir == root) {
+      is_dir = true;
+      cur_dir = root;
+    } else if (dir != null) {
+      while (temp_dir.get_Parent() != null && is_dir == false) {
+        if (temp_dir.get_Parent() == root) {
+          cur_dir = dir;
+          is_dir = true;
+        } else {
+          temp_dir = temp_dir.get_Parent();
+        }
+      }
+    }
+  }
+  
+  /**
+   * Finds directory or file at given path. 
+   * Path can be either relative to the current directory or may be full.
+   * if path is wrong or does not exist return none.
+   * 
+   * @param path: The string representation of the relative/full path.
+   */
+  public static Object pathToDirorFile(String path) {
+    // Split dir names to their respective index
+    String[] dir_names = path.split("/"); int i = 0;
+    Directory temp_dir = null;
+    // Condition for path being a full path.
+    if (path.indexOf("/") == 0) {
+      temp_dir = FileSystem.getRoot(); i = 1;
+    }
+    // If no path is empty, assume current directory is the whole path
+    else if (path.length() == 0) {
+      return FileSystem.get_cur_dir();
+    }
+    // If not a full path, Continue relative path process
+    else {
+      temp_dir = FileSystem.get_cur_dir(); i = 0;
+    }
+    // Compare each dir starting at root/cur_dir by matching dir names.
+    for (int name_indx = i; name_indx < dir_names.length; name_indx++) {
+          if (temp_dir.getSubDirectory(dir_names[name_indx]) != null) {
+            // Finds if the next directory exists
+            temp_dir = temp_dir.getSubDirectory(dir_names[name_indx]);
+          } 
+          // If there is no next directory, assume the last name is a file
+          else if (temp_dir.getFile(dir_names[name_indx]) != null) {
+            return temp_dir.getFile(dir_names[name_indx]);
+          } 
+          // If all else fails, path is invalid, return null and an exception
+          else {
+            ExceptionHandler.invalidPathException(path);
+            return null;
+          }
+      }
+    // return the current directory if loop does not get instantiated.
+    return temp_dir;
+  }
+  
+  
+  public static String tracePath(Directory dir, String path) {
+    if (dir.get_Parent() == null) {
+      return "/";
+    } else {
+      path = (FileSystem.tracePath(dir.get_Parent(), path) + 
+              dir.getName() + "/");
+    }
+    return path;
+  }
+
+}

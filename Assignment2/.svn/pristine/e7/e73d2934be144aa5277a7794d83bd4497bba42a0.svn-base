@@ -1,0 +1,11 @@
+package driver;
+
+public class Exit {
+  public Exit() {
+  }
+
+  public boolean exitCalled() {
+    // TODO Auto-generated method stub
+    return true;
+  }
+}

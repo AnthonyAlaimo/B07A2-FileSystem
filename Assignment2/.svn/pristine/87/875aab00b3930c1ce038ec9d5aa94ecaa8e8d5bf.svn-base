@@ -1,0 +1,59 @@
+package test;
+
+import static org.junit.Assert.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import org.junit.*;
+import driver.*;
+
+
+import org.junit.Test;
+
+public class DirectoryListTest {
+
+	@Test
+	public void list() {
+		/*
+		 * This test checks that the contents of a directory are listed
+		 */
+	}
+	@Test
+	public void listRPath() {
+		/*
+		 * This test check that if the ls command is used with -R and a path
+		 * is given all sub directories of the current directory should be
+		 * listed recursively
+		 */
+	}
+	@Test
+	public void listRNoPath() {
+		/*
+		 * this test checks if -R is present, but no path is given, then 
+		 * the contents of the current directory should be printed with 
+		 * a new line following each.
+		 */
+	}
+	@Test
+	public void listRPathFile() {
+		/*
+		 * This test checks if -R and a path are given which specifies a file
+		 * then the path should be printed
+		 */
+	}
+	@Test
+	public void listRPathDir() {
+		/*
+		 * This test checks if -R and a path are given which specifies a directory
+		 * then the path should be print followed by a : and then the contents
+		 * of the directory with a newline after each.
+		 */
+	}
+	@Test
+	public void listRPathDoesntExist() {
+		/*
+		 * This test checks if -R and an incorrect path is given then an
+		 * appropriate error should be given
+		 */
+	}
+
+}

@@ -1,0 +1,11 @@
+Class Name: RedirectSystem
+Parent Class(if any): 
+Subclasses(if any): 
+
+Responsibilities:
+* Decides which command will run the given input
+
+
+Collaborators:
+* File
+* Directory

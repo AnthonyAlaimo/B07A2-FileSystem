@@ -1,0 +1,63 @@
+package driver;
+import driver.Directory;
+
+public class FileSystem {
+  private static Directory root;
+  private static Directory cur_dir;
+  
+  public FileSystem() {
+    root = new Directory("/");
+    cur_dir = root;
+  }
+  
+  public static Directory getRoot() {
+    return root;
+  }
+  
+  public static Directory get_cur_dir() {
+    return cur_dir;
+  }
+  
+  public static void set_cur_dir(Directory dir) {
+    boolean is_dir = false;
+    Directory temp_dir = dir;
+    while (temp_dir.get_Parent() != null && is_dir == false) {
+      if (temp_dir.get_Parent() == root) {
+        cur_dir = dir;
+        is_dir = true;
+      } else {
+        temp_dir = temp_dir.get_Parent();
+      }
+    }
+  }
+  
+  public static void main(String[]Args) {
+    // Setting up Mock directory system for testing
+    FileSystem filesystem = new FileSystem();
+    Directory Users = new Directory("Users");
+    Directory Muizz = new Directory("Muizz");
+    Directory Nick = new Directory("Nick");
+    Directory Images = new Directory("Images");
+    Directory UjwalPics = new Directory("UjwalPics");
+    Directory Desktop = new Directory("Desktop");
+    Directory Abbas = new Directory("Abbas");
+    Users.addDirectory(Muizz);
+    Muizz.addDirectory(Images);
+    Images.addDirectory(UjwalPics);
+    Users.addDirectory(Nick);
+    root.addDirectory(Users);
+    Muizz.addDirectory(Desktop);
+    // Gets root
+    System.out.println(cur_dir.getName());
+    filesystem.set_cur_dir(Desktop);
+    // Gets Desktop
+    System.out.println(cur_dir.getName());
+    // Gets UjwalPics
+    filesystem.set_cur_dir(UjwalPics);
+    System.out.println(cur_dir.getName());
+    //Shouldnt change from Ujwal pics. Abbas can't trace back to root
+    filesystem.set_cur_dir(Abbas);
+    System.out.println(cur_dir.getName());
+  }
+
+}

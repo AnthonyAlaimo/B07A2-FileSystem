@@ -1,0 +1,65 @@
+package driver;
+
+public class Move extends Command {
+
+	private String documentation = "";
+
+	public String runCommand(String input) {
+		// Remove extra spaces from input
+		input = input.trim().replaceAll(" +", " ");
+		// Split the input into OLDPATH and NEWPATH at the space
+		String[] inputs = input.split(" ");
+		// Find the desired Directory/File for OLDPATH
+		Object oldpath = FileSystem.pathToDirorFile(inputs[0]);
+		// Find the desired Directory/File for NEWPATH
+		Object newpath = FileSystem.pathToDirorFile(inputs[1]);
+		// If OLDPATH is a File
+		if (oldpath instanceof File) {
+			/*
+			 * Call the moveFile method with OLDPATH and NEWPATH as its parameters
+			 */
+			moveFile((File) oldpath, (Directory) newpath);
+		}
+		// Otherwise, meaning OLDPATH is a Directory
+		else {
+			/*
+			 * Call the moveDir method with OLDPATH and NEWPATH as its parameters
+			 */
+			moveDir((Directory) oldpath, (Directory) newpath);
+		}
+		return "";
+	}
+	
+	public void moveDir(Directory oldpath, Directory newpath) {
+		// Create a new Directory with the same name as OLDPATH
+		Directory newdir = new Directory(oldpath.getName());
+		// Call the helper function, copy, with newpath, newdir and oldpath
+		move(newpath, newdir, oldpath);
+		// Remove OLDPATH from its original location
+		FileSystem.deleteDirectory(oldpath);
+	}
+	
+	public void move(Directory parent, Directory child, Directory old) {
+		// Create a new object of type Copy
+		Copy cp = new Copy();
+		// Call the copy method on the Copy object
+		cp.copy(parent, child, old);
+	}
+	
+	public void moveFile(File oldpath, Directory newpath) {
+		// Create a new File
+		File newfile = new File();
+		// Make its text equal to the old file's text
+		newfile.setName(oldpath.getName());
+		// Make its name equal to the old file's name
+		newfile.setText(oldpath.getText());
+		// Set the newfile to be inside child
+		newpath.addFile(newfile);
+	}
+
+	@Override
+	public String printDocumentation() {
+		return(documentation);
+	}
+
+}

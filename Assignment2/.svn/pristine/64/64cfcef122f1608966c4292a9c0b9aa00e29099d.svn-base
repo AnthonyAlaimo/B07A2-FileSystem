@@ -1,0 +1,80 @@
+package driver;
+
+import java.util.Arrays;
+
+public class CommandFind extends Command {
+  private static String search = "";
+
+  private Class get_type(String type_in_str) {
+    Class type = null;
+    if (type_in_str.startsWith("-type f")) {
+      type = File.class;
+    } else if (type_in_str.startsWith("-type d")) {
+      type = Directory.class;
+    }
+    return type;
+  }
+
+  private String get_name(String name) {
+    // Remove outer quotations from string
+    name = name.substring(1, name.length() - 1);
+    if (Validator.valid_name_or_path(name, "[^A-Za-z0-9_-]")) {
+      return name;
+    } else {
+      return null;
+    }
+  }
+
+  private void update_search(Directory prnt_Dir, Object type, String name) {
+    Directory subDir = ((Directory) prnt_Dir).getSubDirectory(name);
+    File subFile = ((Directory) prnt_Dir).getFile(name);
+    String path = FileSystem.tracePath(prnt_Dir, "");
+    if ((subDir != null && type instanceof Directory)
+        || (subFile != null && type instanceof File)) {
+      CommandFind.search += name + " exists in " + path + "\n";
+    } else {
+      CommandFind.search += name + " doesn't exist in " + path + "\n";
+    }
+  }
+
+  private String find(String[] paths, Object type, String name) {
+    if (paths.length == 0) {
+      // Assume path is current directory
+      this.update_search(FileSystem.get_cur_dir(), type, name);
+    }
+    for (String path : paths) {
+      Object dir_or_file = FileSystem.pathToDirorFile(path);
+      if (dir_or_file instanceof Directory) {
+        this.update_search(((Directory) dir_or_file), type, name);
+      }
+    }
+    return CommandFind.search;
+  }
+
+  @Override
+  public void run_command(String input) {
+    // Step 0: Trim trailing whitespace and split index appropriately
+    CommandFind.search = "";
+    input = input.trim();
+    String[] input_list = input.split(" ");
+    // Step 1: get name from Input and assign to a variable
+    String name = this.get_name(input_list[input_list.length - 1]);
+    // Step 2: get type from input and assign to a variable
+    Object type = this.get_type(input_list[input_list.length - 3]);
+    // Step 3: get All paths into a separate ArrayList
+    String[] paths = Arrays.copyOfRange(input_list, 0, Math.max(0, input_list.length - 5));
+    // Step 4: Call command that finds path of type with matching name
+    if (name != null && type != null) {
+      CommandFind.search = find(paths, type, name); 
+    }
+    // Step 5: Send string result into RedirectSystem before printing to console
+    System.out.println(CommandFind.search);
+  }
+
+  @Override
+  public void print_documentation() {
+    // TODO Auto-generated method stub
+
+  }
+
+}

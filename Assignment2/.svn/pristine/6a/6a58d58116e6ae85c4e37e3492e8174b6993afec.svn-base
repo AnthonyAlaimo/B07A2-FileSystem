@@ -1,0 +1,120 @@
+package test;
+
+import static org.junit.Assert.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import org.junit.*;
+import driver.*;
+
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+
+public class EchoFileTest {
+	private static FileSystem<Directory> fs = FileSystem.getInstance();
+	private final ByteArrayOutputStream outContent = 
+			new ByteArrayOutputStream();
+	private final PrintStream originalOut = System.out;
+	//
+	private static File file;
+	private static Directory directory;
+	private static EchoFile echo;
+	private static Validator valid;
+	
+	@BeforeClass
+	public static void setUp() {
+		file = new File("file", "hi");
+		directory = new Directory("RandomDir");
+		FileSystem.getRoot().addDirectory(directory);
+		directory.addFile(file);
+		echo = new EchoFile();
+		Command.addCommand("echo", echo);
+		
+	}
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		Field field = (fs.getClass()).getDeclaredField("fs");
+		field.setAccessible(true);
+		field.set(null, null);
+	}
+	@Before
+	public void setUpStream() {
+		// Make a new scanner before every test case
+		System.setOut(new PrintStream(outContent));
+	}
+	@After
+	public void setDown() {
+		System.setOut(originalOut);
+	}
+	@Test
+	public void fileOverwrite() {
+		String output = ((EchoFile)Command.execute("echo")).runCommand
+				("echo \"hey\" > /RandomDir/file");
+	    String expectedOutput = "hey";
+	    Assert.assertEquals(expectedOutput, output);
+	}
+	@Test
+	public void printString() {
+		String output = ((EchoFile)Command.execute("echo")).runCommand
+				("echo \"hello\"");
+	    String expectedOutput = "hello";
+	    Assert.assertEquals(expectedOutput , output);
+	}
+	@Test
+	public void fileAppend() {
+		valid = new Validator("echo \"hey\" >> /RandomDir/file");
+	    String expectedOutput = "hihey";
+	    Assert.assertEquals(expectedOutput, file.getText());
+	}
+	@Test
+	public void invalidStringSyntax() {
+		String input = "echo hey";
+		echo.runCommand(input);
+	    String expectedOutput = 
+	    		"Error: Invalid syntax for echo. Check man echo\n";
+	    Assert.assertEquals(expectedOutput, outContent.toString());
+	}
+	@Test
+	public void newFileExistInCorrectDir() {
+		String input = "echo \"hey\" > file5";
+		valid = new Validator(input);
+	    File expectedOutput = FileSystem.getCurDir().getFile("file5");
+	    Assert.assertTrue(expectedOutput instanceof File);
+	}
+	@Test
+	public void testSpaces() {
+		String input = "echo          \"coolStuff\"    >>   /RandomDir/file";
+		valid = new Validator(input);
+	    String expectedOutput = "hiheycoolStuff";
+	    Assert.assertEquals(expectedOutput, file.getText());
+		
+	}
+}
+

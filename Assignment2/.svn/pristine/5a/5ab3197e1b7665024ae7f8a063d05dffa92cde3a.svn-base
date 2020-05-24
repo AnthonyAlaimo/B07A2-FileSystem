@@ -1,0 +1,41 @@
+package driver;
+
+import java.util.ArrayList;
+
+/**
+ * This class uses an ArrayList of Directories to represent a Directory
+ * stack with push and pop methods that follow the usual Last In, First Out
+ * (LIFO) behavior of a stack. This class is used by the DirectoryPush and
+ * DirectoryPop classes, which are the classes corresponding to pushd and popd,
+ * respectively.
+ */
+public class DirectoryStack {
+
+	// Arraylist of directories used for the stack
+	private static ArrayList<Directory> stack = new ArrayList<Directory>();
+
+	/**
+	 * This method pushes the directory given as its parameter onto the
+	 * Arraylist of Directories, called stack.
+	 * 
+	 * @param dir The desired directory to be pushed onto the top of the stack.
+	 */
+	public static void push(Directory dir) {
+		// Push the given directory onto the stack at the beginning
+		stack.add(dir);
+	}
+
+	/**
+	 * This method pops off the top Directory from the stack, meaning it removes
+	 * it from the stack and returns it.
+	 * 
+	 * @return Returns the Directory popped from the stack.
+	 */
+	public static Directory pop() {
+		// Pop the first directory in the stack off and set its value to a new
+		// directory
+		Directory popped = stack.remove(stack.size() - 1);
+		// Return the new directory
+		return popped;
+	}
+}

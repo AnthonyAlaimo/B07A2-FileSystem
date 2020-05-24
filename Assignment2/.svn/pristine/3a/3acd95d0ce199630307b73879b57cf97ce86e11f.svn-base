@@ -1,0 +1,168 @@
+package driver;
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+
+public class Copy extends Command {
+	
+	private String documentation = 
+	    (" Description:\n--------------------------------------------\n\tLike"
+	        + " mv, but takes File or Directory from OLDPATH and copies\n\t"
+	        + "to NEWPATH. If OLDPATH is a directory, recursively copy\n\t"
+	        + "the directory's contents into NEWPATH\n Syntax:\n--------------"
+	        + "------------------------------\n\t/#: cp OLDPATH NEWPATH\n\t"
+	        + "Where OLDPATH & NEWPATH are paths that leads to a File or\n\tDi"
+	        + "rectory where the content gets copied.\n\n\t===REDIRECTION===\n"
+	        + "\t/#: cp OLDPATH NEWPATH [> OUTFILE]\n\tWhere cp output text ov"
+	        + "erwrites OUTFILE's text.\n\t/#: cp OLDPATH NEWPATH [>> OUTFILE]"
+	        + "\n\t Where cp output text appends to OUTFILE.\n Examples:\n----"
+	        + "----------------------------------------\n\t/#: cp /Users /Pro"
+	        + "grams\n\t/#: cp /File.txt /Documents\n\t/#: cp /File1.txt /File"
+	        + "2.txt\n Possible Exceptions:\n---------------------------------"
+	        + "-----------\n\t invalidSyntaxException, invalidPathException");
+
+	public String runCommand(String input) {
+		// Remove extra spaces from input
+		input = input.trim().replaceAll(" +", " ");
+		// Split the input into OLDPATH and NEWPATH at the space
+		String[] inputs = input.split(" ");
+		// Find the desired Directory/File for OLDPATH
+		Object oldpath = FileSystem.pathToDirorFile(inputs[0]);
+		// Find the desired Directory/File for NEWPATH
+		Object newpath = FileSystem.pathToDirorFile(inputs[1]);
+		// If OLDPATH is the root directory
+		if (oldpath == FileSystem.getRoot()) {
+			// Create rootObjectError with cp as its input
+			ExceptionHandler.rootObjectError("cp");
+			// Return empty String to break method
+			return "";
+		}
+		// If OLDPATH is a File and NEWPATH is a Directory
+		if (oldpath instanceof File & newpath instanceof Directory) {
+			/* Call the copy(File, Directory) method with OLDPATH and
+			 * NEWPATH as its parameters
+			 */
+			copy((File) oldpath, (Directory) newpath);
+		}
+		// Otherwise, if OLDPATH is a Directory and NEWPATH is a Directory
+		else if (oldpath instanceof Directory & newpath instanceof Directory) {
+			// Create directories by casting OLDPATH and NEWPATH to Directory
+			Directory oldDir = (Directory) oldpath;
+			Directory newDir = (Directory) newpath;
+			// Find the Directory in NEWPATH with the same name as OLDPATH
+			Directory oldInNew = newDir.getSubDirectory(oldDir.getName());
+			// If it does not exist
+			if (oldInNew == null) {
+				/* Call the copy(Directory, Directory) method with OLDPATH and
+				 * NEWPATH as its parameters
+				 */
+				copy(oldDir, newDir);
+			}
+			// Otherwise, meaning it must be overwritten
+			else {
+				/* Call the replace method with OLDPATH, NEWPATH and
+				 * oldInNew as its parameters
+				 */
+				replace(oldDir, newDir, oldInNew);
+			}
+		}
+		// Otherwise, if OLDPATH is File and NEWPATH is a Directory
+		else if (oldpath instanceof File & newpath instanceof File) {
+			/* Call the copy(File, File) method with OLDPATH and NEWPATH as
+			 * its parameters
+			 */
+			copy((File) oldpath, (File) newpath);
+		}
+		/* Otherwise, if meaning OLDPATH is a Directory and NEWPATH is a File,
+		 * or other such types, which is not valid
+		 */
+		else if (oldpath instanceof Directory & newpath instanceof File) {
+			ExceptionHandler.invalidSyntaxException("cp");
+		}
+		/* Otherwise, do nothing, the exception has already been handled
+		 * 
+		 */
+		// Return an empty String
+		return "";
+	}
+
+	public void copy(Directory oldpath, Directory newpath) {
+		// Create a new Directory with the same name as OLDPATH
+		Directory newdir = new Directory(oldpath.getName());
+		// Call the helper function, copyDir, with newpath, newdir and oldpath
+		copyDir(newpath, newdir, oldpath);
+	}
+	
+	public void replace(Directory oldpath, Directory newpath, Directory
+			delete) {
+		/* Remove the Directory to be deleted, which exists in NEWPATH and has
+		 * the same name as OLDPATH
+		 */
+		delete.deleteDirectory();
+		/* Call the copy(Directory, Directory) method, which will add OLDPATH
+		 * into NEWPATH
+		 */
+		copy(oldpath, newpath);
+	}
+	
+	public void copyDir(Directory parent, Directory child, Directory old) {
+		// Set child to be a subdirectory of parent
+		parent.addDirectory(child);
+		// For every subdirectory of the old
+		for (Directory d : old.getSubDirectories()) {
+			/* Recursively call this method with child, a new directory with
+			 * with the same name as the current subdirectory, and the current
+			 * subdirectory
+			 */
+			copyDir(child, new Directory(d.getName()), d);
+		}
+		// For every File of old
+		for (File f : old.getAllFiles()) {
+			// Call copy(File, Directory) method with the old's Files and child
+			copy(f, child);
+		}
+	}
+	
+	public void copy(File oldpath, Directory newpath) {
+		// Create a new File with the name and text of OLDPATH
+		File newfile = new File(oldpath.getName(), oldpath.getText());
+		// Set the newfile to be inside newpath
+		newpath.addFile(newfile);
+	}
+	
+	public void copy(File oldpath, File newpath) {
+		// Overwrite NEWPATH's text with that of OLDPATH
+		newpath.setText(oldpath.getText());
+	}
+	
+	@Override
+	public String printDocumentation() {
+		return documentation;
+	}
+}

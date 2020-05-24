@@ -1,0 +1,51 @@
+package driver;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+public class Getter extends Command {
+
+	private String fileContents;
+
+	@Override
+	public String runCommand(String input) {
+		fileContents = readLink(input);
+		String fileName = input.substring(input.lastIndexOf("/")+1, 
+				input.length());
+		File file = new File(fileName, fileContents);
+		FileSystem.getCurDir().addFile(file);
+		return "";
+	}
+	// TODO Auto-generated method stub
+
+	private String readLink(String input){
+		fileContents = "\n";
+		URL oracle;
+		try {
+			oracle = new URL(input);
+			URLConnection connectURL = oracle.openConnection();
+			BufferedReader in = new BufferedReader(new InputStreamReader(connectURL.getInputStream()));
+			String inputLine;
+			while ((inputLine = in.readLine()) != null)
+				fileContents += inputLine + "\n";
+			in.close();
+		} catch (MalformedURLException e) {
+			ExceptionHandler.invalidURLException(input);
+		} catch (IOException e) {
+			ExceptionHandler.invalidURLException(input);
+		}
+		return fileContents;
+	}
+
+	@Override
+	public String printDocumentation() {
+		return null;
+		// TODO Auto-generated method stub
+
+	}
+
+}

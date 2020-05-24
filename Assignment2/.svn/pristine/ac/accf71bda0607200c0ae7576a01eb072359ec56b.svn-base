@@ -1,0 +1,99 @@
+package driver;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.ArrayList;
+import java.lang.Class;
+import driver.Directory;
+import driver.DirectoryMake;
+
+public class FileSystem {
+  private static Directory root = new Directory("/");
+  private static Directory cur_dir = root;
+  
+  public static Directory getRoot() {
+    return root;
+  }
+  
+  public static Directory get_cur_dir() {
+    return cur_dir;
+  }
+  
+  public static void set_cur_dir(Directory dir) {
+    boolean is_dir = false;
+    Directory temp_dir = dir;
+    if (dir == root) {
+      is_dir = true;
+      cur_dir = root;
+    } else if (dir != null) {
+      while (temp_dir.get_Parent() != null && is_dir == false) {
+        if (temp_dir.get_Parent() == root) {
+          cur_dir = dir;
+          is_dir = true;
+        } else {
+          temp_dir = temp_dir.get_Parent();
+        }
+      }
+    }
+  }
+  
+  /**
+   * Finds directory at path. Path can be either relative to the current
+   * directory or may be a full path. if path is wrong or does not exist
+   * return none.
+   * 
+   * @param path: The string representation of the relative/full path.
+   */
+  public static Directory path_to_dir(String path) {
+    // Split dir names to their respective index
+    String[] dir_names = path.split("/"); int i = 0;
+    Directory temp_dir = null;
+    // Condition for path being a full path.
+    if (path.indexOf("/") == 0) {
+      temp_dir = FileSystem.getRoot(); i = 1;
+    }
+    // If no path is empty, assume current directory is the whole path
+    else if (path.length() == 0) {
+      return FileSystem.get_cur_dir();
+    }
+    // If not a full path, Continue relative path process
+    else {
+      temp_dir = FileSystem.get_cur_dir(); i = 0;
+    }
+    Directory prev_dir = temp_dir;
+    // Compare each dir starting at root/cur_dir by matching dir names.
+    for (int name_indx = i; name_indx < dir_names.length; name_indx++) {
+      List<Directory> SubDirs = temp_dir.getSubDirectories();
+      for (Directory sub_dir : SubDirs) {
+        if (sub_dir.getName().equals(dir_names[name_indx])) {
+          temp_dir = sub_dir; break;
+        }
+      }
+      // If cond. to find out if the directory exists in FileSystem.
+      if (temp_dir == prev_dir) {
+        // return none if directory does not exist in FileSystem
+        return null;
+      } else if (name_indx == dir_names.length - 1) {
+        // Return the directory at the end of the path if it exists.
+        break;
+      }
+        prev_dir = temp_dir;
+    }
+    // return the current directory if loop does not get instantiated.
+    return temp_dir;
+  }
+  
+  
+  public static String tracePath(Directory dir, String path) {
+    if (dir.get_Parent() == null) {
+      return "/";
+    } else {
+      path = (FileSystem.tracePath(dir.get_Parent(), path) + 
+              dir.getName() + "/");
+    }
+    return path;
+  }
+
+}

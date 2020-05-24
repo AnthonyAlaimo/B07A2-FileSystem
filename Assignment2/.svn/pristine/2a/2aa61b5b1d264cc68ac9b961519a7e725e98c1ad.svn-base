@@ -1,0 +1,185 @@
+// **********************************************************
+// Assignment2:
+// Student1: Muizz Uddin Ahmed
+// UTORID user_name: ahmed323
+// UT Student #: 1004160043
+// Author:
+//
+// Student2: Nicholas Michael Gibson Elliott
+// UTORID user_name: ellio232
+// UT Student #: 1004416713
+// Author:
+//
+// Student3: Anthony Alaimo
+// UTORID user_name: alaimoa1
+// UT Student #: 1004421814
+// Author:
+//
+// Student4: Millan Singh Khurana
+// UTORID user_name: khuran53
+// UT Student #: 1004169259
+// Author:
+//
+//
+// Honor Code: I pledge that this program represents my own
+// program code and that I have coded on my own. I received
+// help from no one in designing and debugging my program.
+// I have also read the plagiarism section in the course info
+// sheet of CSC B07 and understand the consequences.
+// *********************************************************
+package driver;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Can take the formatted input from Parser and call the corresponding Command
+ * with the user's input. Also contains methods that can be called upon to see
+ * if a given path, directory, or name that a user has inputed is valid.
+ * 
+ * @author Millan Singh Khurana
+ *
+ */
+public class Validator {
+  /**
+   * A string that represents the input that the user could send
+   * for the Commands.
+   */
+  private String input;
+  /**
+   * Takes the formatted input from Parser and creates an instance of the 
+   * corresponding Command with the user's input, or calls an exception if the
+   * user hasn't inputed a valid command.
+   * 
+   * @param inputList
+   * @param input
+   */
+  public Validator(String[] inputList, String input, String[] redirector) {
+    // A boolean used to track if the user's input represents a usable Command.
+    boolean commandCheck = false;
+    /*
+     *  Loops through the commandList to check if the user's input correlates
+     *  to one of the usable Commands.
+     */
+    for (String name : Command.getCommands()) {
+      if (inputList[0].toLowerCase().equals(name)) {
+        /*
+         *  Checks if the user inputed either nothing or only one word, then
+         *  sets the input to a blank String if that is the case as for this 
+         *  scenario the user would be trying to call a command that doesn't
+         *  require input (ex. pwd, ls).
+         *           
+         */
+        if (inputList.length <= 1) {
+          input = "";
+        } else {
+          // Removes the command from the input String.
+          input = input.substring(name.length() + 1);
+        }
+        commandCheck = true;
+        /*
+         * Casts the input String (that represents a usable command) into an
+         * instance of that actual Command, and then calls the
+         * print_documentation method to print all of the necessary 
+         * information.
+         */
+        String output = ((Command)Command.execute(name)).run_command(input);
+        // Redirect output before printing to console
+        RedirectSystem.redirectTo(redirector, output);
+        break;
+      }
+    }
+    /*
+     * Calls an invalidCommand exception if the user's input doesn't represent
+     * a usable Command.
+     */
+    if (!commandCheck) {
+      ExceptionHandler.invalidCommand(input);
+    }
+  }
+
+  /**
+   * Takes in a directory and a file name and returns true if a file with that
+   * name exists in the directory, otherwise it returns false.
+   * 
+   * @param dir_with_file
+   * @param file_name
+   * @return Returns true if the file exists, otherwise false.
+   */
+  public static boolean valid_file(Directory dir_with_file, String file_name) {
+    // Get all files in the given directory
+    List<File> dir_files = dir_with_file.getAllFiles();
+    // find if the file name is in the list. if not found, file doesn't exist
+    for (File file : dir_files) {
+      if (file.getName().equals(file_name)) {
+        return true;
+      }
+    }
+    // Return an Error Message
+    return false;
+  }
+
+  /**
+   * Takes in a directory parent_dir and a directory name dir_name and returns 
+   * true if a directory with dir_name exists as a child of the parent_dir, 
+   * otherwise it returns false.
+   * 
+   * @param parent_dir
+   * @param dir_name
+   * @return true if dir_name is a child of parent_dir, otherwise returns false
+   */
+  public static boolean valid_dir(Directory parent_dir, String dir_name) {
+    // Get all sub directories in the parent
+    List<Directory> subDirs = parent_dir.getSubDirectories();
+    // find if the dir name exists in the list. if not, dir doesn't exist.
+    for (Directory dir : subDirs) {
+      if (dir.getName().equals(dir_name)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Takes in a String name_or_path that represents a name or path, and checks
+   * if the name or path contain any special characters. Returns true if there
+   * are no special character present, otherwise returns false.
+   * 
+   * @param name_or_path
+   * @param regex
+   * @return true if no special characters are present, otherwise false
+   */
+  public static boolean valid_name_or_path(String name_or_path, String regex) {
+    // Stores the regex formatted version of name_or_path
+    String dummy = name_or_path.replaceAll(regex, "");
+    // Check if the new regex formated name_or_path is different
+    if (dummy.equals(name_or_path) == false) {
+      // If regex version is different, deduce whether string is path or name
+      if (dummy.indexOf("/") != -1) {
+        ExceptionHandler.invalidPathException(name_or_path);
+      }
+      else {
+        ExceptionHandler.invalidNameException(name_or_path);
+      }
+    } else {
+      // In this case, regex version = name or string thus return True.
+      return true;
+    }
+    // After returning proper exception, return false
+    return false;
+  }
+  
+  public static boolean validateFind(String[] input_split) {
+    boolean validated = false;
+    if (input_split.length >= 5){
+      if (input_split[input_split.length - 2].equals("-name") &&
+          input_split[input_split.length - 4].equals("-type")) {
+       validated = true;
+      }
+    } else {
+      validated = false;
+    }
+    return validated;
+  }
+}

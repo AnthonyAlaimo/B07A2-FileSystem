@@ -1,0 +1,25 @@
+package driver;
+
+public class DirectoryPush extends Command {
+
+	public void run_command(String input) {
+		System.out.println(input);
+		// Find the Directory corresponding to the inputed path
+		Object push = FileSystem.pathToDirorFile(input);
+		// If it is actually a Directory
+		if (push instanceof Directory) {
+			// Call pushDirectory method with the Directory found
+			this.pushDirectory((Directory) push);
+		}
+		else {
+			// Call invalidPathException in ExceptionHandler class
+			ExceptionHandler.invalidPathException(input);
+		}
+	}
+	private void pushDirectory(Directory dir) {
+		// Push the current working directory onto the directory stack
+		DirectoryStack.push(FileSystem.get_cur_dir());
+		// Set the current directory to the desired directory dir
+		FileSystem.set_cur_dir(dir);
+	}
+}

@@ -1,0 +1,9 @@
+Class Name: FileSystem
+Parent Class(if any):
+Subclasses(if any):
+
+Responsibilities: 
+* To keep track of the current directory the user is in
+
+Collaborators:
+* Directory

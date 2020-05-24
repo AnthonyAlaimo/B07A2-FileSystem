@@ -1,0 +1,9 @@
+Class Name: FileAppend
+Parent Class(if any):
+Subclasses(if any):
+
+Responsibilities: 
+* The given String is added to the contents of the indicated file
+
+Collaborators:
+* File

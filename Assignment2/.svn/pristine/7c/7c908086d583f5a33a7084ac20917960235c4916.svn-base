@@ -1,0 +1,13 @@
+package driver;
+
+public class DirectoryChange {
+
+	public static void changeDirectory(String input) {
+		// Find the desired directory by calling the path_to_dir method with
+		// the inputed path as its parameter
+		Directory newDir = FileSystem.path_to_dir(input);
+		// Set the current working directory to the new directory found by
+		// path_to_dir
+		FileSystem.set_cur_dir(newDir);
+	}
+}

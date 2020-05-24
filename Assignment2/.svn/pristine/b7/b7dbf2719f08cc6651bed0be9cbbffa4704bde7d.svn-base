@@ -1,0 +1,39 @@
+package driver;
+
+public class TreeOfFS extends Command {
+  private static String tree_str;
+  
+  private String repeat_tab(Integer number_of_repeats) {
+    String tabs = "";
+    for (int i = 0; i < number_of_repeats; i++) {
+      tabs += "\t";
+    }
+    return tabs;
+  }
+  
+  private void get_tree(Directory dir, Integer Indent_lvl) {
+    String indentBy = repeat_tab(Indent_lvl);
+    TreeOfFS.tree_str += indentBy + dir.getName() + "\n";
+    for (Directory subDir: dir.getSubDirectories()) {
+      this.get_tree(subDir, Indent_lvl + 1);
+    }
+  }
+
+  @Override
+  public void run_command(String input) {
+    if (input.equals("")) {
+      TreeOfFS.tree_str = "";
+      this.get_tree(FileSystem.getRoot(), 0);
+      System.out.println(tree_str);
+    } else {
+      ExceptionHandler.invalidSyntaxException();
+    }
+  }
+
+  @Override
+  public void print_documentation() {
+    // TODO Auto-generated method stub
+
+  }
+
+}

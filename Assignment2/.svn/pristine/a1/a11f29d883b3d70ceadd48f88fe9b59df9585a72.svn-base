@@ -1,0 +1,9 @@
+package driver;
+
+public class DirectoryPath {
+  
+  public static void printCurrentPath() {
+    System.out.println(FileSystem.tracePath(FileSystem.get_cur_dir(), ""));
+  }
+
+}

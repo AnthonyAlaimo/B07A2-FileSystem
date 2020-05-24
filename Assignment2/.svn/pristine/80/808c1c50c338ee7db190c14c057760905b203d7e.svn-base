@@ -1,0 +1,31 @@
+package driver;
+
+public class File {
+	//file's name and test variables
+	private String name;
+	private String text;
+	
+	public File() {
+		
+	}
+	/*
+	 *  file's name will be set to n(desired name) and it will
+	 *  contain the text t.
+	 */
+	public File(String n, String t) {
+		this.name = n;
+		setText(t);
+	}
+
+	// returns the text stored inside the indicated file
+	public String getText() {
+		return text;
+	}
+
+	// set the text for the indicated file
+	public void setText(String text) {
+		this.text = text;
+	}
+	
+
+}

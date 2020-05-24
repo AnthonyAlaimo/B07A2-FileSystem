@@ -1,0 +1,11 @@
+package driver;
+
+public class DirectoryPush {
+
+	public void pushDirectory(Directory cwd, Directory dir) {
+		// Push the current working directory onto the directory stack
+		DirectoryStack.push(cwd);
+		// Set the current directory to the desired directory dir
+		FileSystem.set_cur_dir(dir);
+	}
+}

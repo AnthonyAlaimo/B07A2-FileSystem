@@ -1,0 +1,79 @@
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+package driver;
+/**
+ * This class represents the echo command, which appends to the text of a given file
+ * @author Anthony Alaimo
+ */
+public class EchoAppend{
+	/**
+	 * This method takes two strings, one representating a path or file name
+	 * and text for that file, and appends the given text to that files current text
+	 * 
+	 * @param text, a string representing the wanted text of a file
+	 * @param path, a string representing the path to or just the name of
+	 * a file, which will be mutated
+	 */
+	public void echo(String text, String path) {
+		// find the indicated directory of the wanted file
+		Object parentDir = 
+				FileSystem.pathToDirorFile(path.substring(0, 
+						path.lastIndexOf("/")+1));
+		/*
+		 * if the directory exist, we need to then check if the file exist
+		 * inside that directory
+		 */
+		if(parentDir instanceof Directory){
+			/*
+			 * The name of the file is located at the end of the path
+			 * after the last /
+			 */
+			String name = path.substring(path.lastIndexOf("/") + 1);
+			File f = ((Directory)parentDir).getFile(name);
+			// if the file exist we append the given text to it
+			if (f instanceof File){
+				String currentStr = f.getText();
+				f.setText(currentStr + text);
+			}
+			/*
+			 *  if the file doesn't exist, create a new File with the given name
+			 *  and place it inside the parent directory
+			 */
+			else {
+				File newfile = new File(name, text);
+				((Directory)parentDir).addFile(newfile);
+			}
+		}
+		else if(parentDir instanceof File){
+			ExceptionHandler.invalidPathException(path);
+		}
+	}
+
+}

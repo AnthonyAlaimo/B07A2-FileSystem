@@ -1,0 +1,14 @@
+package driver;
+
+public class ExceptionHandler {
+  
+  public static void invalidPathException(String invalid_path) {
+    System.out.println("Error: " + invalid_path + " is not a valid path");
+  }
+  
+  public static void invalidNameException(String invalid_name) {
+    System.out.println("Error: " + invalid_name + 
+                        " contains special characters");
+  }
+
+}

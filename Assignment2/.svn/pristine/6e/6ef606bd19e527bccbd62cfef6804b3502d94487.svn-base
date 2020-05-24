@@ -1,0 +1,34 @@
+package driver;
+
+public class DirectoryPop extends Command {
+	private String documentation = "\n Description: \n\n Removes the top entry"
+			+ "from the directory stack and makes it the current working directory.";
+
+	public void run_command(String input) {
+		// If the inputed is empty, as wanted (and required)
+		if (input.length() == 0) {
+			// Call the popDirectory method
+			popDirectory();
+		}
+		// Otherwise, which is an invalid input from the user
+		else {
+			// Call an invalidPathException in ExceptionHandler class with the
+			// given String input as its parameter
+			ExceptionHandler.invalidPathException(input);
+		}
+	}
+
+	private void popDirectory() {
+		// Call the pop method in the DirectoryStack class and set it to a new
+		// Directory object called pop
+		Directory pop = DirectoryStack.pop();
+		// Set the current working directory to be pop, the popped Directory
+		FileSystem.set_cur_dir(pop);
+	}
+
+	@Override
+	public void print_documentation() {
+		// TODO Auto-generated method stub
+		System.out.println(documentation);
+	}
+}

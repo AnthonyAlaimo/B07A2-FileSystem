@@ -1,0 +1,86 @@
+package driver;
+
+import java.util.List;
+
+
+/**
+ * Command in Jshell that prints a Dir's contents in the FileSystem
+ * 
+ * @author Muizz Uddin Ahmed
+ * @version 1.0
+ */
+public class DirectoryList extends Command {
+  /**
+   * Stores the documentation for the given command ls
+   */
+  private String documentation = "\n Description: \n\n Prints the contents"
+      + " of the given directory (or the current directory if the user"
+      + " does not input one).";
+  
+  /**
+   * Prints all directories and files inside the given directory.
+   * @param dir: contains the directory thats going to print all of its dirs
+   *             and its files.
+   */
+  private void printDirContents(Directory dir) {
+    // get the list of all directories and list of all files
+    List<File> dir_files = dir.getAllFiles();
+    List<Directory> subDirs = dir.getSubDirectories();
+    String dir_contents = "";
+    // Append each file and directory to the string dir_contents
+    for (File file : dir_files) {
+      dir_contents = dir_contents + " " + file.getName();
+    }
+    for (Directory directory : subDirs) {
+      dir_contents = dir_contents + " " + directory.getName();
+    }
+    // Print the string with all of the directory contents
+    System.out.println(dir.getName() + ":" + dir_contents);
+  }
+
+  /**
+   * main method that prints the list of dirs/files in the given dir or the 
+   * file itself if path directs to a file.
+   * 
+   * @param path: A string representation of the path
+   */
+  private void ls(String path) {
+    Object dir_or_file = FileSystem.pathToDirorFile(path);
+    // Find if the path leads to a file or directory
+    if (dir_or_file instanceof Directory) {
+      // print directory's contents after getting directory from path_to_dir
+      this.printDirContents((Directory)dir_or_file);
+    } else if (dir_or_file instanceof File) {
+      // prints file name
+      System.out.println(((File) dir_or_file).getName());
+    } else if (path.length() == 1 && dir_or_file == FileSystem.getRoot()) {
+      // Assume the directory is the root in this case
+      this.printDirContents((Directory) dir_or_file);
+    }
+  }
+  
+  /**
+   * Runs the command whenever ls is called from Jshell
+   * @param Input: Takes in the input from after the command.
+   */
+  public void run_command(String Input) {
+    // Remove whitespace from both front and back then split into diff paths
+    String[] paths = Input.trim().replaceAll(" +", " ").split(" ");
+    // check if input is empty or not
+    if (Input.length() == 0) {
+      // Print current directory contents if no path is given
+      this.printDirContents(FileSystem.get_cur_dir());
+    } else {
+      // loop through each path until all paths have been addressed
+      for (String path : paths) {
+          this.ls(path);
+      }
+    }
+  }
+
+  @Override
+  public void print_documentation() {
+    // TODO Auto-generated method stub
+    System.out.println(documentation);
+  }
+}

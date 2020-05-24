@@ -1,0 +1,27 @@
+package driver;
+
+public class DirectoryPush extends Command {
+  private String documentation = "\n Description: \n\n Saves the current"
+      + " directory and changes the given directory to the current working"
+      + "directory.";
+    
+
+	public void run_command(String input) {
+		System.out.println(input);
+		// Find the Directory corresponding to the inputed path
+		Directory push = (Directory) FileSystem.pathToDirorFile(input);
+		// Call pushDirectory method with the Directory found
+		this.pushDirectory(push);
+	}
+	private void pushDirectory(Directory dir) {
+		// Push the current working directory onto the directory stack
+		DirectoryStack.push(FileSystem.get_cur_dir());
+		// Set the current directory to the desired directory dir
+		FileSystem.set_cur_dir(dir);
+	}
+  @Override
+  public void print_documentation() {
+    // TODO Auto-generated method stub
+    System.out.println(documentation);
+  }
+}

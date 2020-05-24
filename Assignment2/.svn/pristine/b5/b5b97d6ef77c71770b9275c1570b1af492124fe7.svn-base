@@ -1,0 +1,9 @@
+Class Name: Terminator
+Parent Class(if any):
+Subclasses(if any):
+
+Responsibilities: 
+* Exits and closes the current program
+
+Collaborators: 
+* JShell

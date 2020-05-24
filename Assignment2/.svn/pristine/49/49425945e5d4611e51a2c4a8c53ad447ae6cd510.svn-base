@@ -1,0 +1,10 @@
+Class Name: EchoAppend
+Parent Class(if any):
+Subclasses(if any):
+
+Responsibilities:
+* Takes in a string and a file and appends the string to the indicated file
+
+Collaborators:
+* FileSystem
+* File

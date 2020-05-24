@@ -1,0 +1,72 @@
+// **********************************************************
+// Assignment2:
+// Student1: Muizz Uddin Ahmed
+// UTORID user_name: ahmed323
+// UT Student #: 1004160043
+// Author:
+//
+// Student2: Nicholas Michael Gibson Elliott
+// UTORID user_name: ellio232
+// UT Student #: 1004416713
+// Author:
+//
+// Student3: Anthony Alaimo
+// UTORID user_name: alaimoa1
+// UT Student #: 1004421814
+// Author:
+//
+// Student4: Millan Singh Khurana
+// UTORID user_name: khuran53
+// UT Student #: 1004169259
+// Author:
+//
+//
+// Honor Code: I pledge that this program represents my own
+// program code and that I have coded on my own. I received
+// help from no one in designing and debugging my program.
+// I have also read the plagiarism section in the course info
+// sheet of CSC B07 and understand the consequences.
+// *********************************************************
+package driver;
+
+import java.util.Scanner;
+/**
+ * Acts as the driver for the entire program to run.
+ * @author Millan Singh Khurana
+ *
+ */
+public class JShell {
+  /**
+   * Sets up all of the necessary elements of the Command, FileSystem, and
+   * Parser so that the program can initiate.
+   * @param args
+   */
+  public static void main(String[] args) {
+    /*
+     * Adds all of the applicable commands to the Command class hashtable so
+     * that the user's inputs can be properly cast into Commands and run.
+     */
+    Command.add_Command("mkdir", new DirectoryMake());
+    Command.add_Command("ls", new DirectoryList());
+    Command.add_Command("cd", new DirectoryChange());
+    Command.add_Command("history", new CommandHistory());
+    Command.add_Command("pushd", new DirectoryPush());
+    Command.add_Command("popd", new DirectoryPop());
+    Command.add_Command("cat", new ViewFile());
+    Command.add_Command("pwd", new DirectoryPath());
+    Command.add_Command("man", new Man());
+    Command.add_Command("echo", new EchoFile());
+    Command.add_Command("exit", new Exit());
+    Command.add_Command("tree", new TreeOfFS());
+    Command.add_Command("find", new CommandFind());
+    //Command.add_Command("save", new Saver());
+    //Command.add_Command("get", new Getter());
+    //Command.add_Command("load", new Loader());
+    Command.add_Command("cp", new Copy());
+    /*
+     *  Creates a Parser that will get input from the user and sort it into
+     *  readable lists for the Validator to use.
+     */
+    Parser parser = new Parser();
+  }
+}

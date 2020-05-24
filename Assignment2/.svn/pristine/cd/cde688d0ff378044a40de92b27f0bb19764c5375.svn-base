@@ -1,0 +1,52 @@
+package test;
+
+import static org.junit.Assert.*;
+import org.junit.*;
+
+import driver.*;
+
+public class DirectoryChangeTest {
+	static Directory dir1;
+	static Directory dir2;
+	static Directory dir3;
+	static DirectoryChange cd;
+	static Validator v;
+
+	@BeforeClass
+	public static void setUpClass() {
+		cd = new DirectoryChange();
+		dir1 = new Directory("Bob");
+		dir2 = new Directory("Bill");
+		dir3 = new Directory("Paul");
+		FileSystem.getRoot().addDirectory(dir1);
+		dir1.addDirectory(dir2);
+		dir2.addDirectory(dir3);
+		Command.add_Command("cd", cd);
+	}
+	
+	@After
+	public void tearDown() {
+		FileSystem.set_cur_dir(FileSystem.getRoot());
+	}
+	
+	@Test
+	public void testCDRelative() {
+		FileSystem.set_cur_dir(dir1);
+		String input = "cd Bill/Paul";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir3 == FileSystem.get_cur_dir());
+	}
+
+	@Test
+	public void testCDFullPath() {
+		FileSystem.set_cur_dir(dir3);
+		String input = "cd /Bob/Bill";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir2 == FileSystem.get_cur_dir());
+	}
+	
+	@Test
+	public void testInvalidDirectoryName() {
+		
+	}
+}

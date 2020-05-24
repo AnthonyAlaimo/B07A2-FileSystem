@@ -1,0 +1,152 @@
+package driver;
+
+import java.util.Arrays;
+
+/**
+ * Command that finds if a specific file or directory with name in quotations exists in the given
+ * path's directories.
+ * 
+ * @author ahmed323
+ *
+ */
+public class CommandFind extends Command {
+  /**
+   * String search is a static that is used to concatenate updates in a search.
+   */
+  private static String search = "";
+
+  /**
+   * Helper method that converts the str representation in the find command's syntax into a File
+   * class type of Directory class type.
+   * 
+   * @param type_in_str: The string representation of the type
+   * @return the converted string representation that is in now a class type
+   */
+  private Object get_type(String type_in_str) {
+    // Instantiate an arbitrary variable if both cases aren't satisfied
+    Object type = null;
+    if (type_in_str.equals("f")) {
+      // Convert the string into a File type if it was f
+      type = File.class;
+    } else if (type_in_str.equals("d")) {
+      // Convert the string into a Directory type if it was d
+      type = Directory.class;
+    } else {
+      // Assume user placed invalid syntax if no cases were satisfied
+      ExceptionHandler.invalidSyntaxException();
+    }
+    // Return the new class type
+    return type;
+  }
+
+  /**
+   * Helper method for run_command that strips the surrounding quotations and accepts string as a
+   * name if and only if the name does not contain any special characters other than - or _
+   * 
+   * @param name: the string representation of the dir or file's name
+   * @return stripped trailing quotations name without special characters
+   */
+  private String get_name(String name) {
+    // Ensure name does have outer quotations before stripping
+    if (name.indexOf("\"") == 0 &&
+        name.lastIndexOf("\"") == name.length() - 1) {
+      name = name.substring(1, name.length() - 1);
+    } else {
+      // Assume user placed wrong input syntax for find and call an exception
+      ExceptionHandler.invalidSyntaxException();
+      return null;
+    }
+    // Check if name contains no special characters inside before returning it
+    if (Validator.valid_name_or_path(name, "[^A-Za-z0-9_-]")) {
+      return name;
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Acts as a setter method for the variable search. Concatenates whether or not a given path
+   * contains a specified directory.
+   * 
+   * @param prnt_Dir: The parent directory that supposedly contains the given file or directory.
+   * @param type: The type of the sub File or sub Directory.
+   * @param name: The name of the sub File/Directory.
+   */
+  private void update_search(Directory prnt_Dir, Object type, String name) {
+    // Get the sub directory, sub file, and path from the parent directory
+    Directory subDir = prnt_Dir.getSubDirectory(name);
+    File subFile = prnt_Dir.getFile(name);
+    String path = FileSystem.tracePath(prnt_Dir, "");
+    /*
+     * Make sure parent directory has either the subfile or subdir in search. Only concatenates a
+     * success if it exists in the parent directory or else search concatenates a failure.
+     */
+    if ((subDir != null && type == Directory.class) ||
+        (subFile != null && type == File.class)) {
+      CommandFind.search += name + " exists in " + path + "\n";
+    } else {
+      CommandFind.search += name + " doesn't exist in " + path + "\n";
+    }
+  }
+
+  /**
+   * Acts as the center of the find command's search. calls other helper methods to find and update
+   * successful/failed searches for n amount of paths.
+   * 
+   * @param paths: all the paths listed by the user.
+   * @param type: The type associated to the sub File/Directory in search of.
+   * @param name: the name associated to the sub File/Directory in search of.
+   * @return the end result of the search with all its attempts per valid path.
+   */
+  private String find(String[] paths, Object type, String name) {
+    for (String path : paths) {
+      // Find if the given path exists and if it leads to a directory
+      Object dir_or_file = FileSystem.pathToDirorFile(path);
+      if (dir_or_file instanceof Directory) {
+        // Call the helper method to search inside the existing parent dir.
+        this.update_search(((Directory) dir_or_file), type, name);
+      }
+    }
+    // return all search attempts after every path has been checked.
+    return CommandFind.search;
+  }
+
+  @Override
+  /**
+   * Runs the Find command to search through given paths
+   * 
+   * @params input: user input following after the command's name
+   */
+  public String run_command(String input) {
+    // Trim extra whitespace before splitting by every whitespace
+    CommandFind.search = "";
+    input = input.trim().replaceAll(" +", " ");
+    String[] input_list = input.split(" ");
+    // Check if the input followed proper syntax for the find command
+    if (Validator.validateFind(input_list)) {
+      // Get name from input and assign it to a variable.
+      String name = this.get_name(input_list[input_list.length - 1]);
+      // Get type from input and assign it to a variable.
+      Object type = this.get_type(input_list[input_list.length - 3]);
+      // Get All paths into a separate ArrayList
+      String[] paths = Arrays.copyOfRange(input_list, 0, 
+                                          input_list.length - 4);
+      // Call find helper that finds path of type with matching name.
+      if (name != null && type != null) {
+        CommandFind.search = find(paths, type, name);
+      }
+    } else {
+      // Assume user inputed wrong syntax and return a syntax exception.
+      ExceptionHandler.invalidSyntaxException();
+    }
+    // Send string result into RedirectSystem before printing to console.
+    return CommandFind.search;
+  }
+
+  @Override
+  public String print_documentation() {
+    // TODO Auto-generated method stub
+    return "";
+  }
+
+}

@@ -1,0 +1,29 @@
+package driver;
+
+public class ViewFile extends Command {
+	private String cat(String path) {
+		Object file = FileSystem.pathToDirorFile(path);
+		String result = "";
+		// print the text of the given file
+		if(file instanceof File){
+			result = (((File)file).getName()) + ": " + (((File)file).getText()) + "\n\n\n";
+		}
+		else if(file instanceof Directory) {
+			System.out.print("Invalid file");
+		}
+		return result;
+	}
+	public void run_command(String input) {
+		input = input.trim(); String result = "";
+		String[] paths = input.split(" ");
+		for (String path : paths) {
+			result = result + this.cat(path);
+		}
+		System.out.println(result);
+	}
+	@Override
+	public void print_documentation() {
+		// TODO Auto-generated method stub
+		
+	}
+}

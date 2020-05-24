@@ -1,0 +1,136 @@
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+package test;
+
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import org.junit.*;
+
+import driver.*;
+
+public class DirectoryPushTest {
+	static Directory dir1;
+	static Directory dir2;
+	static Directory dir3;
+	static DirectoryPush pushd;
+	static Validator v;
+	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private final PrintStream originalOut = System.out;
+	
+	@BeforeClass
+	public static void setUpClass() {
+		pushd = new DirectoryPush();
+		dir1 = new Directory("John");
+		dir2 = new Directory("Jack");
+		dir3 = new Directory("Joe");
+		FileSystem.getRoot().addDirectory(dir1);
+		FileSystem.getRoot().addDirectory(dir2);
+		dir1.addDirectory(dir3);
+		Command.add_Command("pushd", pushd);
+	}
+	
+	@Before
+	public void setUpStream() {
+	    // Make a new scanner before every test case
+	    System.setOut(new PrintStream(outContent));
+	  }
+	
+	@After
+	public void tearDown() {
+		// Set current working directory to root after each test
+		FileSystem.set_cur_dir(FileSystem.getRoot());
+		// Destroy the old scanner after every test case
+	    System.setOut(originalOut);
+	}
+	
+	// Test pushd on a relative path to see if the cwd has changed
+	@Test
+	public void testPushdChangeRelative() {
+		FileSystem.set_cur_dir(dir1);
+		String input = "pushd Joe";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir3 == FileSystem.get_cur_dir());
+	}
+	
+	/* Test pushd on a relative path to see if the inputed directory has been
+	 * pushed to the stack
+	 */
+	@Test
+	public void testPushdStackRelative() {
+		FileSystem.set_cur_dir(dir1);
+		String input = "pushd Joe";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir1 == DirectoryStack.pop());
+	}
+
+	// Test pushd on a full path to see if the cwd has changed
+	@Test
+	public void testPushdChangeFullPath() {
+		FileSystem.set_cur_dir(dir2);
+		String input = "pushd /John/Joe";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir3 == FileSystem.get_cur_dir());
+	}
+	
+	/* Test pushd on a full path to see if the inputed directory has been
+	 * pushed to the stack
+	 */
+	@Test
+	public void testPushdStackFullPath() {
+		FileSystem.set_cur_dir(dir2);
+		String input = "pushd /John/Joe";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir2 == DirectoryStack.pop());
+	}
+	
+	// Test an invalid path input on pushd command for the exception handling
+	@Test
+	public void testInvalidPathException() {
+		FileSystem.set_cur_dir(dir1);
+		String input = "pushd /Joe/Jim";
+		v = new Validator(input.split(" "), input);
+		Assert.assertEquals("Error: /Joe/Jim is not a valid path."
+		+ System.getProperty("line.separator"), outContent.toString());
+	}
+	
+	// Test a pushd call with no directory, which gives a invalidSyntaxException
+	@Test
+	public void testInvalidSyntaxException() {
+		FileSystem.set_cur_dir(dir1);
+		String input = "pushd";
+		v = new Validator(input.split(" "), input);
+		Assert.assertEquals("Invalid syntax for given Command. Check man"
+				+ " COMMAND" + System.getProperty("line.separator"),
+				outContent.toString());
+	}
+}

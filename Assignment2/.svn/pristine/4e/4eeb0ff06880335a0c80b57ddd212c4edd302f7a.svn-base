@@ -1,0 +1,34 @@
+package driver;
+
+public class ExceptionHandler {
+
+	public static void invalidPathException(String invalid_path) {
+		System.out.println("Error: " + invalid_path + " is not a valid path");
+	}
+
+	public static void invalidNameException(String invalid_name) {
+		System.out.println("Error: " + invalid_name + " contains special"
+				+ " characters");
+	}
+
+	public static void invalidDirName(String invalid_name) {
+		System.out.println(invalid_name + " does not exist in the FileSystem");
+	}
+
+	public static void DirNameExistsException(String name) {
+		System.out.println(name + " already exists in given path.");
+	}
+
+	public static void invalidSyntaxException() {
+		System.out.println("Invalid syntax for given Command. Check man COMMAND");
+	}
+	
+	public static void invalidFileName(Object invalid_name) {
+		System.out.println(invalid_name + " does not exist in the FileSystem");
+	}
+	
+	public static void illegalString(String text) {
+		System.out.println(text + " Contains an illegal character");
+	}
+
+}

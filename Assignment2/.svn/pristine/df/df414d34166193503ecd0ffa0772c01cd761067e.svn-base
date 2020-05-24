@@ -1,0 +1,87 @@
+package driver;
+
+import java.util.List;
+
+public class DirectoryList {
+  
+  
+  public static boolean valid_file(Directory dir_with_file, String file_name) {
+    // Get all files in the given directory
+    List<File> dir_files = dir_with_file.getAllFiles();
+    // find if the file name is in the list. if not found, file doesn't exist
+    for (File file : dir_files) {
+      if (file.getName().equals(file_name)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  
+  public static boolean valid_dir(Directory parent_dir, String dir_name) {
+    // Get all sub directories in the parent
+    List<Directory> subDirs = parent_dir.getSubDirectories();
+    // find if the dir name exists in the list. if not, dir doesn't exist.
+    for (Directory dir : subDirs) {
+      if (dir.getName().equals(dir_name)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public static void printDirContents(Directory dir) {
+    // get the list of all directories and list of all files
+    List<File> dir_files = dir.getAllFiles();
+    List<Directory> subDirs = dir.getSubDirectories();
+    String dir_contents = "";
+    // Append each file and directory to the string dir_contents
+    for (File file : dir_files) {
+      dir_contents = dir_contents + " " + file.getName(); 
+    }
+    for (Directory directory : subDirs) {
+      dir_contents = dir_contents + " " + directory.getName();
+    }
+    // Print the string with all of the directory contents
+    System.out.println(dir.getName() + ":" + dir_contents);
+  }
+  
+  /**
+   * main method that prints the list of dirs/files in the given dir or 
+   * the file itself if path directs to a file
+   * @param path: A string representation of the path
+   */
+  public static void ls(String path) {
+    if (path.length() != 0) {
+      // Get name of directory or file that you are trying to use ls on.
+      String name = path.substring(path.lastIndexOf("/") + 1);
+      // Get the path of the parent directory of the dir/file.
+      String parent_path = path.substring(0, path.length() - name.length());
+      // Check if parent directory is the root. If so, skip path_to_dir
+      Directory parent_dir = null;
+      if (parent_path.length() == 1) {
+        parent_dir = FileSystem.getRoot();
+      } else {
+        parent_dir = FileSystem.path_to_dir(parent_path);
+      }
+      // Find if the path leads to a file or directory
+      if (DirectoryList.valid_dir(parent_dir, name)){
+        // print directory's contents after getting directory from path_to_dir
+        Directory dir = FileSystem.path_to_dir(path);
+        DirectoryList.printDirContents(dir);
+      } else if (DirectoryList.valid_file(parent_dir, name)) {
+        // prints file name
+        System.out.println(name);
+      } else if (path.length() == 1 && parent_dir == FileSystem.getRoot()) {
+        // Assume the directory is the root in this case
+        DirectoryList.printDirContents(parent_dir);
+      }
+    } else {
+      // Print current directory contents if no path is given
+      DirectoryList.printDirContents(FileSystem.get_cur_dir());
+    }
+    
+    
+  }
+
+}

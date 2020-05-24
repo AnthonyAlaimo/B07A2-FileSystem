@@ -1,0 +1,31 @@
+package test;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class CopyTest {
+
+	@Test
+	public void copyFileToNewPath() {
+		/*
+		 * This test checks that the indicated file is copied and moved to the
+		 * indicated NewPath.
+		 */
+	}
+	@Test
+	public void copyDirToNewPath() {
+		/*
+		 * This test checks that the indicated Dir is copied and recursively
+		 * moved to the indicated NewPath.
+		 */
+	}
+	@Test
+	public void invalidPath() {
+		/*
+		 * This test checks that if an invalid path is given an appropriate
+		 * error will be shown
+		 */
+	}
+
+}

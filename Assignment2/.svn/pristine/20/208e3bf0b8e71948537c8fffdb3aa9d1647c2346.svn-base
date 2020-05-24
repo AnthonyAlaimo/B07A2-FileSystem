@@ -1,0 +1,108 @@
+package test;
+
+import static org.junit.Assert.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import org.junit.*;
+import driver.*;
+
+public class ViewFileTest {
+	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private final PrintStream originalOut = System.out;
+	//
+	private static File file;
+	private static File file2;
+	private static File file3;
+	private static Directory directory;
+	private static Validator valid;
+	private static ViewFile cat;
+
+	@BeforeClass
+	public static void setUpClass() {
+		cat = new ViewFile();
+		file = new File("file1", "hey");
+		file2 = new File("file2", "hi");
+		file3 = new File("file3", "hello");
+		directory = new Directory("RandomDir");
+		FileSystem.getRoot().addDirectory(directory);
+		directory.addFile(file);
+		directory.addFile(file2);
+		directory.addFile(file3);
+		Command.add_Command("cat", cat);
+
+	}
+	@Before
+	public void setUpStream() {
+		// Make a new scanner before every test case
+		System.setOut(new PrintStream(outContent));
+	}
+	@After
+	public void setDown() {
+		System.setOut(originalOut);
+	}
+
+	@Test
+	public void testFileContent() {
+		String input = "cat /RandomDir/file2";
+	    Validator valid = new Validator(input);
+	    FileSystem.setCurDir(directory);
+	    String expectedOutput = "file2: " 
+	    		+ FileSystem.getCurDir().getFile("file2").getText() 
+	    		+ "\n";
+	    Assert.assertEquals(expectedOutput , outContent.toString());
+	}
+	@Test
+	public void testMultipleFileContent() {
+		String input = "cat file1 file2 file3";
+		valid = new Validator(input);
+		String expectedOutput = "file1: " + file.getText()
+				+"\n\n\nfile2: " + file2.getText()
+				+"\n\n\nfile3: " + file3.getText() + "\n";
+		Assert.assertEquals(expectedOutput, outContent.toString());
+	}
+	@Test
+	public void testInvalidFileName() {
+		String input = "cat file";
+		valid = new Validator(input);
+		String expectedOutput = "Error: file is not a valid path.\n";
+		Assert.assertEquals(expectedOutput, outContent.toString());
+		
+	}
+	@Test
+	public void testValidAndInvalidFileName() {
+		String input = "cat file file2 file3";
+		valid = new Validator(input);
+		String expectedOutput = "Error: file is not a valid path."
+				+"\nfile2: " + file2.getText()
+				+"\n\n\nfile3: " + file3.getText() + "\n";
+		Assert.assertEquals(expectedOutput, outContent.toString());
+		
+	}
+	@Test
+	public void testInvalidPath() {
+		String input = "cat /badPath/file";
+		valid = new Validator(input);
+		String expectedOutput = "Error: /badPath/file is not a valid path.\n";
+		Assert.assertEquals(expectedOutput, outContent.toString());
+		
+	}
+	@Test
+	public void testSpacesBeforeFile() {
+		String input = "cat          file1";
+		valid = new Validator(input);
+		String expectedOutput = "file1: " + file.getText() + "\n";
+		Assert.assertEquals(expectedOutput, outContent.toString());
+		
+	}
+	@Test
+	public void testSpacesBetweenMultipleFiles() {
+		String input = "cat        file1      file2        file3";
+		valid = new Validator(input);
+		String expectedOutput = "file1: " + file.getText()
+				+"\n\n\nfile2: " + file2.getText()
+				+"\n\n\nfile3: " + file3.getText() + "\n";
+		Assert.assertEquals(expectedOutput, outContent.toString());
+		
+	}
+	
+}

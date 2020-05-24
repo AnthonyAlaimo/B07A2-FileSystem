@@ -1,0 +1,14 @@
+package driver;
+
+public class ViewFile {
+	public static void cat(String fileName) {
+		// print the text of the given file
+		if (Validator.valid_file(FileSystem.get_cur_dir(), fileName) == true) {
+			System.out.println(fileName);
+		}
+		else
+		{
+			// TODO call exception from exception class when created
+		}
+	}
+}

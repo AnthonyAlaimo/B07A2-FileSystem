@@ -1,0 +1,70 @@
+package driver;
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+
+public class ExceptionHandler {
+
+	public static void invalidPathException(String invalid_path) {
+		System.out.println("Error: " + invalid_path + " is not a valid path");
+	}
+
+	public static void invalidNameException(String invalid_name) {
+		System.out.println("Error: " + invalid_name + " contains special"
+				+ " characters");
+	}
+
+	public static void invalidDirName(String invalid_name) {
+		System.out.println(invalid_name + " does not exist in the FileSystem");
+	}
+
+	public static void DirNameExistsException(String name) {
+		System.out.println(name + " already exists in given path.");
+	}
+
+	public static void invalidSyntaxException() {
+		System.out.println("Invalid syntax for given Command. Check man COMMAND");
+	}
+	
+	public static void invalidFileName(Object invalid_name) {
+		System.out.println(invalid_name + " does not exist in the FileSystem");
+	}
+	
+	public static void illegalString(String text) {
+		System.out.println(text + " Contains an illegal character");
+	}
+	
+	public static void invalidCommand(String text) {
+      System.out.println(text + " is not a valid command.");
+  }
+
+	public static void emptyDirectoryStack() {
+		System.out.println("The Directory Stack is empty, could not pop");
+	}
+}

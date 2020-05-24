@@ -1,0 +1,17 @@
+Class Name: Translator
+Parent Class(if any):
+Subclasses(if any):
+
+Responsibilities:
+* Takes in characters and converts them into comprehensible lines of text
+
+Collaborators:
+* CommandDocumentation
+* CommandHistory
+* DirectoryChange
+* DirectoryList
+* DirectoryPath
+* DirectoryPop
+* DirectoryPush
+* FileEcho
+* FileView

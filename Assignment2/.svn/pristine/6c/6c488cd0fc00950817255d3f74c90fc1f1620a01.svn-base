@@ -1,0 +1,63 @@
+package test;
+
+import static org.junit.Assert.*;
+import org.junit.*;
+
+import driver.*;
+
+public class DirectoryPushTest {
+	static Directory dir1;
+	static Directory dir2;
+	static Directory dir3;
+	static DirectoryPush pushd;
+	static Validator v;
+	
+	@BeforeClass
+	public static void setUpClass() {
+		pushd = new DirectoryPush();
+		dir1 = new Directory("John");
+		dir2 = new Directory("Jack");
+		dir3 = new Directory("Joe");
+		FileSystem.getRoot().addDirectory(dir1);
+		FileSystem.getRoot().addDirectory(dir2);
+		dir1.addDirectory(dir3);
+		Command.add_Command("pushd", pushd);
+	}
+	
+	@After
+	public void tearDown() {
+		FileSystem.set_cur_dir(FileSystem.getRoot());
+	}
+	
+	@Test
+	public void testPushdChangeRelative() {
+		FileSystem.set_cur_dir(dir1);
+		String input = "pushd Joe";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir3 == FileSystem.get_cur_dir());
+	}
+	
+	@Test
+	public void testPushdStackRelative() {
+		FileSystem.set_cur_dir(dir1);
+		String input = "pushd Joe";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir1 == DirectoryStack.pop());
+	}
+
+	@Test
+	public void testPushdChangeFullPath() {
+		FileSystem.set_cur_dir(dir2);
+		String input = "pushd /John/Joe";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir3 == FileSystem.get_cur_dir());
+	}
+	
+	@Test
+	public void testPushdStackFullPath() {
+		FileSystem.set_cur_dir(dir2);
+		String input = "pushd /John/Joe";
+		v = new Validator(input.split(" "), input);
+		assertTrue(dir2 == DirectoryStack.pop());
+	}
+}

@@ -1,0 +1,49 @@
+package test;
+
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import junit.framework.Assert;
+import mockJShell.MockRedirectSystem;
+
+public class RedirectSystemTest {
+
+  @Before
+  public void setUp() throws Exception {}
+
+  @After
+  public void tearDown() throws Exception {}
+
+  @Test
+  public void testRedirectSeparator() {
+    String input = "TEXT > OTHERTEXT";
+    String[] output = MockRedirectSystem.redirectionSeperator(input);
+    Assert.assertEquals("TEXT ", output[0]);
+    Assert.assertEquals("> OTHERTEXT", output[1]);
+  }
+  
+  @Test
+  public void testRedirectSeparatorWithAppend() {
+    String input = "TEXT >> OTHERTEXT";
+    String[] output = MockRedirectSystem.redirectionSeperator(input);
+    Assert.assertEquals("TEXT ", output[0]);
+    Assert.assertEquals(">> OTHERTEXT", output[1]);
+  }
+  
+  @Test
+  public void testRedirectSeparatorNoSeperator() {
+    String input = "TEXT OTHERTEXT";
+    String[] output = MockRedirectSystem.redirectionSeperator(input);
+    Assert.assertEquals("TEXT OTHERTEXT", output[0]);
+    Assert.assertEquals("", output[1]);
+  }
+  
+  @Test
+  public void testRedirectSeparatorInvalidSeperator() {
+    String input = "TEXT >>> OTHERTEXT";
+    String[] output = MockRedirectSystem.redirectionSeperator(input);
+    Assert.assertNull(output);
+  }
+
+}

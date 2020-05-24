@@ -1,0 +1,47 @@
+package driver;
+
+public class EchoFile extends Command{
+	EchoAppend f = new EchoAppend();
+	public void echo(String text, String path) {
+		Object parentDir = FileSystem.pathToDirorFile(path.substring(0, path.lastIndexOf("/") + 1));
+		if(parentDir instanceof Directory){
+			String name = path.substring(path.lastIndexOf("/") + 1);
+			File f = ((Directory)parentDir).getFile(name);
+			if (f instanceof File){
+				f.setText(text);
+			}
+			else {
+				File newfile = new File(name, text);
+				((Directory)parentDir).addFile(newfile);
+			}
+		}
+	}
+
+	// if no file is given, print the text onto the shell
+	public void echo(String text) {
+		System.out.println(text);
+	}
+
+	public void run_command(String input) {
+		String text= input.substring(input.indexOf("\"") + 1, input.lastIndexOf("\""));
+		input = input.substring(input.lastIndexOf("\"") + 1).trim();
+		if (input.contains(">>")){
+			f.echo(text, 
+					input.substring(input.lastIndexOf(">>") + 3, input.length()));
+		}
+		else if (input.contains(">")) {
+			this.echo(text, 
+					input.substring(input.lastIndexOf(">") + 2,  input.length()));
+		}
+		else {
+			this.echo(text);
+		}
+	}
+
+	@Override
+	public void print_documentation() {
+		// TODO Auto-generated method stub
+
+	}
+
+}

@@ -1,0 +1,27 @@
+package driver;
+
+import java.util.Scanner;
+
+public class Translator {
+  private boolean exitCheck;
+
+
+  public Translator() {
+    boolean exitCheck = false;
+    Scanner sc = new Scanner(System.in);
+    String input = sc.nextLine();
+    while (exitCheck == false)
+    {
+      if (input.equals("exit"))
+      {
+        Exit exit = new Exit();
+        exitCheck = exit.exitCalled();
+      }
+      else
+      {
+        input = sc.nextLine();
+      }
+    }
+    sc.close();
+  }
+}

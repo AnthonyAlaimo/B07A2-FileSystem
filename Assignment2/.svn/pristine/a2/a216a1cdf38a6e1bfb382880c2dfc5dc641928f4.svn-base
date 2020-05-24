@@ -1,0 +1,77 @@
+package driver;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class Validator {
+  private String input;
+  private static String[] commandList = {"mkdir", "cat", "cd", "ls", "history",
+		  "pwd", "echo", "man", "popd", "pushd"};
+
+  public Validator(String[] inputList, String input) {
+
+	  for (String name : commandList) {
+		  if (inputList[0].equals(name)) {
+			  if (inputList.length <= 1) {
+				  input = "";
+			  } else {
+				  input = input.substring(name.length() + 1);
+			  }
+			  ((Command)Command.execute(name)).run_command(input);
+		  }
+	  }
+    }
+    
+  
+  public static boolean valid_file(Directory dir_with_file, String file_name) {
+    // Get all files in the given directory
+    List<File> dir_files = dir_with_file.getAllFiles();
+    // find if the file name is in the list. if not found, file doesn't exist
+    for (File file : dir_files) {
+      if (file.getName().equals(file_name)) {
+        return true;
+      }
+    }
+    // Return an Error Message
+    return false;
+  }
+  
+  
+  public static boolean valid_dir(Directory parent_dir, String dir_name) {
+    // Get all sub directories in the parent
+    List<Directory> subDirs = parent_dir.getSubDirectories();
+    // find if the dir name exists in the list. if not, dir doesn't exist.
+    for (Directory dir : subDirs) {
+      if (dir.getName().equals(dir_name)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+public static boolean valid_path(String path) {
+  String test_path = path.replaceAll("[^A-Za-z0-9\\/]", "");
+  if (test_path.equals(path) == false) {
+    ExceptionHandler.invalidPathException(path);
+  } else {
+    return true;
+  }
+  return false;
+}
+
+public static boolean valid_name_or_path(String name_or_path, String regex) {
+  String dummy = name_or_path.replaceAll(regex, "");
+  if (dummy.equals(name_or_path) == false) {
+    if (dummy.indexOf("/") != -1) {
+      ExceptionHandler.invalidPathException(name_or_path);
+    }
+    else {
+      ExceptionHandler.invalidNameException(name_or_path);
+    }
+  } else {
+    return true;
+  }
+  return false;
+}
+}

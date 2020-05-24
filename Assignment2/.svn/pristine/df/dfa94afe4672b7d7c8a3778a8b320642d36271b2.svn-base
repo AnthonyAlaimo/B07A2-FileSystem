@@ -1,0 +1,25 @@
+package driver;
+
+public class DirectoryPath extends Command{
+  private String documentation = "\n Description: \n\n Prints the current"
+      + " working directory (including the whole path).";
+  
+  private void printCurrentPath() {
+    System.out.println(FileSystem.tracePath(FileSystem.get_cur_dir(), ""));
+  }
+  
+  public void run_command(String Input) {
+    if (Input.length() == 0) {
+      this.printCurrentPath();
+    } else {
+      // TODO return invalid syntax exception
+    }
+  }
+
+  @Override
+  public void print_documentation() {
+    // TODO Auto-generated method stub
+    System.out.println(documentation);
+  }
+
+}

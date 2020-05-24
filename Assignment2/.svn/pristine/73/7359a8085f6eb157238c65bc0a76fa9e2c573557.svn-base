@@ -1,0 +1,53 @@
+package driver;
+
+public class EchoFile extends Command{
+	EchoAppend f = new EchoAppend();
+	public void echo(String text, String file) {
+		// once validation is complete this is used to see if the file exist
+		if (Validator.valid_file(FileSystem.get_cur_dir(), file)) {
+			// sets the text of the indicated file with the new indicated string
+			for (File f:FileSystem.get_cur_dir().getAllFiles()) {
+				if (f.getName().equals(file)) {
+					f.setText(text);
+					break;
+				}
+			}
+		}
+		else {
+			// if file doesn't exist, we append text to a new file 
+			String name = file.toString();
+			System.out.println(name);
+			File newfile = new File(text, name);
+			System.out.println(newfile.getName());
+			System.out.println(newfile.getText());
+			FileSystem.get_cur_dir().addFile(newfile);
+		}
+	}
+	
+	// if no file is given, print the text onto the shell
+	public void echo(String text) {
+		System.out.println(text);
+	}
+	
+	public void run_command(String input) {
+		if (input.contains(">>")){
+			System.out.println(input.length());
+			f.echo(input.substring(0, input.lastIndexOf(">>") - 1), 
+					input.substring(input.lastIndexOf(">>") + 3, input.length()));
+		}
+		else if (input.contains(">")) {
+			this.echo(input.substring(0, input.lastIndexOf(">") - 1), 
+					input.substring(input.lastIndexOf(">") + 2,  input.length()));
+		}
+		else {
+			this.echo(input.trim());
+		}
+	}
+
+	@Override
+	public void print_documentation() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

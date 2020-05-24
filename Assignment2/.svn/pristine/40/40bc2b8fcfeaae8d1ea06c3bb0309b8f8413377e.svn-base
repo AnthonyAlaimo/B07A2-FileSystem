@@ -1,0 +1,94 @@
+package driver;
+
+import java.util.ArrayList;
+
+/**
+ * Prints out all the input the user has been giving, including typos and lines with wrong syntax
+ * 
+ * @author monip
+ *
+ */
+public class CommandHistory extends Command {
+  // Stack stores the previously written commands
+  /**
+   * Stores the string representations of the user input
+   */
+  private static ArrayList<String> command_history = new ArrayList<String>();
+  /**
+   * Holds documentation for the command history
+   */
+  private String documentation =
+      ("\n Description: \n\n Shows all or a desired amount of recent" + " "
+          + "commands the user has inputted.\n\n Examples:\n\n history\n"
+          + " 1.mkdir photos\n 2.mkdir songs\n 3.man mkdir\n 4.history\n\n"+
+          " history 3\n 2.mkdir songs\n 3.man mkdir\n 4.history 3\n\n"
+          + " Exceptions:\n\n ");
+
+  /**
+   * Prints all user input history when no truncating number is given. Acts as the default method
+   * for when there is no input other than command
+   */
+  private void view_history() {
+    // Shows entire history if no default is given
+    for (int i = 0; i < command_history.size(); i++) {
+      System.out.println(String.valueOf(i + 1) + "." + command_history.get(i));
+    }
+  }
+
+  /**
+   * Takes in the new index in which will iterate only the most recent items in the history.
+   * 
+   * @param truncateBy : The amount of history the user wants to see
+   */
+  private void view_history(int truncateBy) {
+    // Create new index
+    int index = Math.max(0, command_history.size() - truncateBy);
+    // Shows history at given index
+    for (int i = index; i < command_history.size(); i++) {
+      System.out.println(String.valueOf(i + 1) + "." + command_history.get(i));
+    }
+  }
+
+  /**
+   * Acts as a setter for the private instance variable command_history
+   * 
+   * @param input : String representation of what the user wrote
+   */
+  public static void add_history(String input) {
+    // Adds a user input into history
+    command_history.add(input);
+  }
+
+
+  /**
+   * Runs command for whenever the user inputs history and appropriately Assigns the next method to
+   * match user's interest.
+   * 
+   * @param input: Takes in the input right after the command name
+   */
+  @Override
+  public void run_command(String input) {
+    // Check to see if input syntax is correct
+    if (input == "") {
+      this.view_history();
+    } else {
+      // Check to see if the input contains anything other than integers
+      input = input.trim();
+      if (input.replaceAll("[^0-9]", "").length() < input.length()) {
+        /*
+         * return exception if the user tries to input anything thats not an integer
+         */
+        ExceptionHandler.invalidSyntaxException();
+      } else {
+        // Show a truncated version of history
+        this.view_history(Integer.parseInt(input));
+      }
+    }
+  }
+
+  @Override
+  public void print_documentation() {
+    // TODO Auto-generated method stub
+    System.out.println(documentation);
+  }
+}

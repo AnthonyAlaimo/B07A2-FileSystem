@@ -1,0 +1,118 @@
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+package driver;
+/**
+ * This class represents the echo command, which overwrites the given text of a
+ * file with the given text or if no file is given, just prints out the given
+ * string
+ * @author Anthony Alaimo
+ */
+public class EchoFile extends Command{
+	EchoAppend f = new EchoAppend();
+	/**
+	 * This method takes two strings, one representating a path or file name
+	 * and text for that file, and overwrites that files current text with
+	 * the given text.
+	 * 
+	 * @param text, a string representing the wanted text of a file
+	 * @param path, a string representing the path to or just the name of
+	 * a file, which will be mutated
+	 */
+	private String documentation = ("\n Description: \n\n Prints the current"
+		      + " working directory (including the whole path).\n\n "
+		      + "Examples:\n\n pwd \n\n Possible Exceptions: "
+		      + "n\n invalidPathException, invalidSyntaxException \n");
+	public void echo(String text, String path) {
+		/*
+		 * If a path is given we need to first see if the parent directory of the
+		 * file exist
+		 */
+		Object parentDir = 
+				FileSystem.pathToDirorFile(path.substring(0, 
+						path.lastIndexOf("/") + 1));
+		/*
+		 * if the directory exist, we then check to see if the file exist. if the file
+		 * exist we set its current text to the indicated text. otherwise a new file is
+		 * created inside the parent directory, with the given file name
+		 */
+		if(parentDir instanceof Directory){
+			String name = path.substring(path.lastIndexOf("/") + 1);
+			File f = ((Directory)parentDir).getFile(name);
+			if (f instanceof File){
+				f.setText(text);
+			}
+			else {
+				File newfile = new File(name, text);
+				((Directory)parentDir).addFile(newfile);
+			}
+		}
+	}
+
+	/**
+	 * This method takes a string and prints it back out to the user
+	 * 
+	 * @param text, a string representing the wanted text of a file
+	 */
+	// if no file is given, print the text onto the shell
+	public String echo(String text) {
+		return (text);
+	}
+
+	/**
+	 * This method divides the echo class into 3 main methods and figures out
+	 * which is the necessary method to be ran.
+	 * 
+	 * @param input, a string representing the input of a user, trying to 
+	 * use the echo command.
+	 */
+	public String runCommand(String input) {
+		/*
+		 *  There are 3 cases for all the possible echo commands. Before considering
+		 *  any of the cases we need to identify what is the string of the command 
+		 *  input.
+		 */
+		
+		String text = input.substring(input.indexOf("\"") 
+				+ 1, Math.max(0,input.lastIndexOf("\"")));
+		// the text can not contain double quotes
+		if (text.contains("\"") || input.contains("\"") == false){
+			ExceptionHandler.invalidSyntaxException();
+			return "";
+		}
+		return this.echo(text);
+	}
+
+	@Override
+	public String printDocumentation() {
+		// TODO Auto-generated method stub
+	  return(documentation);
+	}
+
+}

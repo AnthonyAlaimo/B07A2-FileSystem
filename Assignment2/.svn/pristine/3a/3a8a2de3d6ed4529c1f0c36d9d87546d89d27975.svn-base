@@ -1,0 +1,26 @@
+package driver;
+
+public class Man extends Command {
+  private String documentation = "\n Description: \n\n Prints the" + 
+      " documentation, examples, and possible exceptions for the given "
+      + "command.";
+  private static String[] commandList = {"mkdir", "cat", "cd", "ls", "history",
+      "pwd", "echo", "man", "popd", "pushd"};
+
+  @Override
+  public void run_command(String input) {
+    // TODO Auto-generated method stub
+    for (String name : commandList) {
+      if (input.equals(name)) {
+        ((Command)Command.execute(name)).print_documentation();
+      }
+    }
+  }
+
+  @Override
+  public void print_documentation() {
+    // TODO Auto-generated method stub
+    System.out.println(documentation);
+  }
+
+}

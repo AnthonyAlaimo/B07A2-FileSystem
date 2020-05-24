@@ -1,0 +1,105 @@
+package test;
+
+import static org.junit.Assert.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import driver.*;
+
+public class CommandFindTest {
+  private static JShell miniShell = new JShell();
+  private static String output = "";
+  private static String expectedOutput = "";
+  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private FileSystem<Directory> fs;
+
+  @Before
+  public void setUp() throws Exception {
+    // Make a new scanner before every test case for catching errors
+    System.setOut(new PrintStream(outContent));
+    // Empty the output
+    output = "";
+    DirectoryMake mkdir = (DirectoryMake) Command.execute("mkdir");
+    // Create a mini Filesystem
+    mkdir.runCommand(" /Users /Programs /Users/Muizz /Users/Muizz/Desktop");
+    new Validator("echo \"test\" > /Users/TESTFILE");
+    // Create temporary singleton instance
+    fs = FileSystem.getInstance();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    // Destroy the old scanner after every test case meant for error catching
+    System.setOut(originalOut);
+    CommandHistory.clearHistory();
+    Field field = (fs.getClass()).getDeclaredField("fs");
+    field.setAccessible(true);
+    field.set(null, null); //setting the ref parameter to null
+  }
+
+  @Test
+  public void testForSearchingDirectoryFromRoot() {
+    output = ((CommandFind) Command.execute("find")).runCommand("find"
+        + " / -type d -name \"Desktop\"");
+    expectedOutput = "Desktop of type Directory found in path(s):\n" + 
+        "--------------------------------------------\n" + 
+        "->\t/Users/Muizz/\n";
+    Assert.assertEquals(expectedOutput, output);
+  }
+  
+  @Test
+  public void testForSearchingFileFromRoot() {
+    output = ((CommandFind) Command.execute("find")).runCommand("find"
+        + " / -type f -name \"TESTFILE\"");
+    expectedOutput = "TESTFILE of type File found in path(s):\n" + 
+        "--------------------------------------------\n" + 
+        "->\t/Users/\n";
+    Assert.assertEquals(expectedOutput, output);
+  }
+  
+  @Test
+  public void testForInvalidSyntax() {
+    ((CommandFind) Command.execute("find")).runCommand("find"
+        + " / -tope g -none \"TESTFILE\"");
+    expectedOutput = ("Error: Invalid syntax for find. Check man find" +
+        System.getProperty("line.separator")); 
+    output = outContent.toString();
+    Assert.assertEquals(expectedOutput, output);
+  }
+  
+  @Test
+  public void testForFailedFind() {
+    output = ((CommandFind) Command.execute("find")).runCommand("find"
+        + " / -type f -name \"BOB\"");
+    expectedOutput = "BOB of type File found in path(s):\n" + 
+        "--------------------------------------------\n";
+    Assert.assertEquals(expectedOutput, output);
+  }
+  
+  @Test
+  public void testForAppendingResultIntoTESTFILE() {
+    new Validator("find / -type f -name \"TESTFILE\" >> /Users/TESTFILE");
+    output = ((ViewFile) Command.execute("cat")).runCommand("/Users/TESTFILE");
+    expectedOutput = "TESTFILE: test\nTESTFILE of type File found in path(s)" +
+        ":\n--------------------------------------------\n" + 
+        "->\t/Users/\n";
+    Assert.assertEquals(expectedOutput, output);
+  }
+  
+  @Test
+  public void testForOverWritingResultIntoTESTFILE() {
+    new Validator("find / -type d -name \"Desktop\" > /Users/TESTFILE");
+    output = ((ViewFile) Command.execute("cat")).runCommand("/Users/TESTFILE");
+    expectedOutput = "TESTFILE: Desktop of type Directory found in path(s)" +
+        ":\n--------------------------------------------\n" + 
+        "->\t/Users/Muizz/\n";
+    Assert.assertEquals(expectedOutput, output);
+  }
+  
+
+}

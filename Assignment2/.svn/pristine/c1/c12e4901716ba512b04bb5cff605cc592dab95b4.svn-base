@@ -1,0 +1,52 @@
+package driver;
+
+public class Move extends Command {
+
+	private String documentation = "";
+
+	public String runCommand(String input) {
+		// Remove extra spaces from input
+		input = input.trim().replaceAll(" +", " ");
+		// Split the input into OLDPATH and NEWPATH at the space
+		String[] inputs = input.split(" ");
+		// Find the desired Directory/File for OLDPATH
+		Object oldpath = FileSystem.pathToDirorFile(inputs[0]);
+		// Find the desired Directory/File for NEWPATH
+		Object newpath = FileSystem.pathToDirorFile(inputs[1]);
+		// If OLDPATH is a File
+		if (oldpath instanceof File) {
+			/*
+			 * Call the moveFile method with OLDPATH and NEWPATH as its parameters
+			 */
+			moveFile((File) oldpath, (Directory) newpath);
+		}
+		// Otherwise, meaning OLDPATH is a Directory
+		else {
+			/*
+			 * Call the moveDir method with OLDPATH and NEWPATH as its parameters
+			 */
+			moveDir((Directory) oldpath, (Directory) newpath);
+		}
+		return "";
+	}
+	
+	public void moveDir(Directory oldpath, Directory newpath) {
+		// Create a new Directory and set it to OLDPATH
+		Directory dir = oldpath;
+		// Delete OLDPATH
+		FileSystem.deleteDirectory(oldpath);
+		// Add dir as subdirectory of NEWPATH
+		newpath.addDirectory(dir);
+	}
+	
+	public void moveFile(File oldpath, Directory newpath) {
+		// Add oldpath File to newpath
+		newpath.addFile(oldpath);
+	}
+
+	@Override
+	public String printDocumentation() {
+		return(documentation);
+	}
+
+}

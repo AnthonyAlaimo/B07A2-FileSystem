@@ -1,0 +1,36 @@
+package driver;
+import java.util.ArrayList;
+
+public class CommandHistory extends Command {
+  // Stack stores the previously written commands
+  private static ArrayList<String> command_history = new ArrayList<String>();
+  
+  private void view_history() {
+    // Shows entire history if no default is given
+    for (int i = 0; i < command_history.size(); i ++) {
+      System.out.println(String.valueOf(i+1) + ". " + command_history.get(i));
+    }
+  }
+  
+  private void view_history(int new_index) {
+    // Create new index
+    int index = command_history.size() - new_index;
+    // Shows history at given index
+    for (int i = index; i < command_history.size(); i ++) {
+      System.out.println(String.valueOf(i+1) + ". " + command_history.get(i));
+    }
+  }
+  
+  public static void add_history(String input) {
+    // Adds a user input into history
+    command_history.add(input);
+  }
+  
+  public void run_command(String input) {
+    if (input == "") {
+      this.view_history();
+    } else { 
+      this.view_history(Integer.parseInt(input));
+    }
+  }
+}

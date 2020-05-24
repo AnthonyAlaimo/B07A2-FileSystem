@@ -1,0 +1,60 @@
+package test;
+
+import static org.junit.Assert.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import org.junit.*;
+import driver.*;
+
+public class EchoFileTest {
+	File file;
+	Directory directory;
+	EchoFile echo;
+	Validator v;
+	
+	@Before
+	void setUp() {
+		file = new File("hi", "file1");
+		directory = new Directory("RandomDir");
+		FileSystem.getRoot().addDirectory(directory);
+		directory.addFile(file);
+		echo = new EchoFile();
+		Command.add_Command("echo", echo);
+		
+	}
+	@After
+	public void setDown() {
+		FileSystem.set_cur_dir(FileSystem.getRoot());
+	}
+	@Test
+	// not working
+	public void fileOverwrite() {
+		FileSystem.set_cur_dir(directory);
+		String input = "echo \"hello\" > file";
+		v = new Validator(input.split(" "), input);
+		assertTrue(file.getText() == "hello");
+	}
+	@Test
+	// not working
+	public void printString() {
+		FileSystem.set_cur_dir(directory);
+		String input = "echo \"hello\" ";
+		v = new Validator(input.split(" "), input);
+		assertTrue(file.getText() == "hello");
+	}
+	@Test
+	public void fileAppend() {
+		/*
+		 *  this test checks to see that the indicated text is appended to
+		 *  to a current existing file
+		 */
+	}
+	@Test
+	public void fileDoesntExist() {
+		/*
+		 *  this test checks that if then a new file with the given name is
+		 *  created
+		 */
+	}
+	
+}

@@ -1,0 +1,31 @@
+package driver;
+
+public class DirectoryChange extends Command {
+	
+	public void run_command(String input) {
+		// Call the changeDirectory method with the given input
+		this.changeDirectory(input);
+	}
+
+	private void changeDirectory(String input) {
+		// If the input is .., meaning we want to change to the current working
+		// directory's parent directory
+		if (input.equals("..")) {
+			// Set the current directory to the current directory's parent with
+			// the set_cur_dir method in the FileSystem class
+			FileSystem.set_cur_dir(FileSystem.get_cur_dir().get_Parent());
+		}
+		// If the input is .., meaning we want to change to the current directory,
+		// do nothing, the current directory is already what we desire
+		else if (input.equals(".")) {}
+		// Otherwise
+		else {
+			// Find the desired directory by calling the path_to_dir method with
+			// the inputed path as its parameter
+			Object newDir = FileSystem.pathToDirorFile(input);
+			// Set the current working directory to the new directory found by
+			// path_to_dir
+			FileSystem.set_cur_dir((Directory) newDir);
+		}
+	}
+}

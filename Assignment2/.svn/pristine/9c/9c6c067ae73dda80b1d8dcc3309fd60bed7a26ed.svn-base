@@ -1,0 +1,48 @@
+package driver;
+import java.util.ArrayList;
+import java.util.List;
+import driver.File;
+
+public class Directory {
+  private List<Directory> directories;
+  private List<File> files;
+  private Directory parent;
+  
+  // Empty-Constructor Method
+  public Directory() {
+    this.files = new ArrayList<>();
+    this.directories = new ArrayList<>();
+    this.parent = null;
+  }
+  
+  public void set_Parent(Directory parent) {
+    // Sets the Parent dir to the current dir
+    this.parent = parent;
+  }
+  
+  public Directory get_Parent() {
+    // Returns reference to the parent Directory of current Directory
+    return this.parent;
+  }
+  
+  public void addFile(File file) {
+    // Append file to list of files in this directory
+    this.files.add(file);
+  }
+  
+  public void addDirectory(Directory dir) {
+    // Append directory to this directory
+    this.directories.add(dir);
+  }
+  
+  public List<Directory> getSubDirectories(){
+    // Returns an ArrayList of all dirs contained in current dir
+    return this.directories;
+  }
+  
+  public List<File> getAllFiles(){
+    // Returns an ArrayList of all the files in the current dir
+    return this.files;
+  }
+
+}

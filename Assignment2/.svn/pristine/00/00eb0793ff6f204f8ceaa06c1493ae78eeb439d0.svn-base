@@ -1,0 +1,73 @@
+package driver;
+
+public class ChangeDirectory {
+	
+	private Directory dir;
+	private String[] path;
+
+	public Directory changeDirectoy(Directory cwd, String input) {
+		// Call parse method to find the directory to begin from and
+		// break the inputed path into a list
+		parse_path(cwd, input);
+		// Call the navigate method to find the desired directory to be
+		// changed to, which is stored in newDir to be returned
+		Directory newDir = navigate(dir, path);
+		// Return newDir, which will be the new current working directory
+		return newDir;
+	}
+	public void parse_path(Directory cwd, String input) {
+		// Create a directory to store the directory to be traversed from
+		// starting at the current working directory
+		dir = cwd;
+		// If we wish to start from the root
+		if (Character.toString(input.charAt(0)) == "/") {
+			// While the current directory has a parent, meaning it is not
+			// the root
+			while (dir.get_Parent() != null) {
+				// Make the current directory reference the current
+				// directories parent
+				dir = dir.get_Parent();
+			}
+		}
+		// Otherwise, we wish to start from the current working directory,
+		// so no traversing has to be done
+		
+		// Create a string array with all the directories to be traversed in
+		// order
+		path = input.split("/");
+		// Call the navigate method with the directory the traversing starts
+		// from and the string array of the necessary path
+	}
+	
+	public Directory navigate(Directory dir, String[] path) {
+		// For every directory in the path list, in order
+		for (int i = 0; i < path.length; i++) {
+			// Create a marker of type int to check all child directories of
+			// the current directory
+			int childNum = 0;
+			// While the current child directory's name does not match the
+			// current directory in the path list and not every child directory
+			// has been checked, stopping on the last child
+			while (dir.getSubDirectories().get(childNum).getName() != path[i] |
+					childNum < dir.getSubDirectories().size() - 1) {
+				// Move the marker to check the next child directory's name
+				childNum++;
+			}
+			// If the child directory name matches the current directory in the
+			// path list
+			if (dir.getSubDirectories().get(childNum).getName() == path[i]) {
+				// Make the current directory marker point to the current's
+				// child directory that matches the path list
+				dir = dir.getSubDirectories().get(childNum);
+			}
+			// Otherwise, meaning the child directory in the path list does not
+			// exist in the current directory, which means the path is invalid
+			else {
+				// To-do later
+			}
+		}
+		// Now that every directory in the path has been traversed, return the
+		// current directory, which is the desired result
+		return dir;
+	}
+}

@@ -1,0 +1,91 @@
+package driver;
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.io.File;
+import java.io.FileNotFoundException;
+
+public class Saver extends Command {
+
+  private String fileName;
+  private String filePath;
+  private String[] paths;
+  private static ArrayList<String> commandHistory;
+
+  @Override
+  public String runCommand(String input) {
+    if (!(input.contains("/"))){
+      ExceptionHandler.invalidComputerPathException(input);
+    }else {
+      paths = input.split("/");
+      fileName = paths[paths.length-1];
+      filePath = input.substring(0, input.length() - fileName.length() - 1);
+      File saveFile = new File(filePath, fileName);
+      try {
+        saveFile.createNewFile();
+        saveWriter(input);
+      } catch (IOException e1) {
+        ExceptionHandler.invalidComputerPathException(input);
+      }
+    }
+    return "";
+  }
+
+  private void saveWriter(String input) {
+    try {
+      PrintWriter writer = new PrintWriter(input, "UTF-8");
+      commandHistory = CommandHistory.getCommandHistory();
+      for (String command : commandHistory) {
+        writer.println(command);
+      }
+      writer.close();
+    } catch (FileNotFoundException e) {
+      ExceptionHandler.invalidComputerPathException(input);
+    } catch (UnsupportedEncodingException e) {
+      ExceptionHandler.invalidEncodingException("UTF-8 encoding");
+    }
+  }
+
+  @Override
+  public String printDocumentation() {
+    return null;
+    // TODO Auto-generated method stub
+
+  }
+
+}

@@ -1,0 +1,18 @@
+package driver;
+
+public class EchoFile {
+	public void appendString(String s, File f) {
+		// gets the current texts of the indicated file
+		String currentStr = f.getText();
+		// combines the current text with the new indicated string
+		String NewStr = currentStr + s;
+		// sets the text of the indicated file to the new combined string.
+		f.setText(NewStr);
+	}
+	
+	public void overwriteString(String s, File f) {
+		// sets the text of the indicated file with the new indicated string
+		f.setText(s);
+	}
+
+}

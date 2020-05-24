@@ -1,0 +1,83 @@
+package test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import driver.*;
+
+public class TreeOfFSTest {
+  private static JShell miniShell = new JShell();
+  private static String output = "";
+  private static String expectedOutput = "";
+  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+  private FileSystem<Directory> fs;
+
+  @Before
+  public void setUp() throws Exception {
+ // Make a new scanner before every test case for catching errors
+    System.setOut(new PrintStream(outContent));
+    // Empty the output
+    output = "";
+    DirectoryMake mkdir = (DirectoryMake) Command.execute("mkdir");
+    // Create a mini Filesystem
+    mkdir.runCommand(" /Users /Programs /Users/Muizz /Users/Muizz/Desktop");
+    new Validator("echo \"test\" > /Users/TESTFILE");
+    // Create temporary singleton instance
+    fs = FileSystem.getInstance();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    // Destroy the old scanner after every test case meant for error catching
+    System.setOut(originalOut);
+    CommandHistory.clearHistory();
+    Field field = (fs.getClass()).getDeclaredField("fs");
+    field.setAccessible(true);
+    field.set(null, null); //setting the ref parameter to null
+  }
+
+  @Test
+  public void testForCorrectOutput() {
+    output = ((TreeOfFS) Command.execute("tree")).runCommand("");
+    expectedOutput = "/\n\tUsers\n\t\tMuizz\n\t\t\tDesktop\n\tPrograms\n";
+    Assert.assertEquals(expectedOutput, output);
+  }
+  
+  @Test
+  public void testForInvalidSyntax() {
+    output = ((TreeOfFS) Command.execute("tree")).runCommand(" 10 times");
+    expectedOutput = "Error: Invalid syntax for tree. Check man tree"
+        + System.getProperty("line.separator");
+    Assert.assertEquals(expectedOutput, outContent.toString());
+  }
+  
+  @Test
+  public void testForTrailingWhiteSpaceInput() {
+    output = ((TreeOfFS) Command.execute("tree")).runCommand("     ");
+    expectedOutput = "/\n\tUsers\n\t\tMuizz\n\t\t\tDesktop\n\tPrograms\n";
+    Assert.assertEquals(expectedOutput, output);
+  }
+  
+  @Test
+  public void testForAppendingToTESTFILE() {
+    new Validator("tree >> /Users/TESTFILE");
+    output = ((ViewFile) Command.execute("cat")).runCommand("/Users/TESTFILE");
+    expectedOutput = "TESTFILE: test\n/\n\tUsers\n\t\tMuizz\n\t\t\tDesktop\n"
+        + "\tPrograms\n";
+    Assert.assertEquals(expectedOutput, output);
+  }
+  
+  @Test
+  public void testForCreatingNEWFILEWithTree() {
+    new Validator("tree > /Users/NEWFILE");
+    output = ((ViewFile) Command.execute("cat")).runCommand("/Users/NEWFILE");
+    expectedOutput = "NEWFILE: /\n\tUsers\n\t\tMuizz\n\t\t\tDesktop\n"
+        + "\tPrograms\n";
+    Assert.assertEquals(expectedOutput, output);
+  }
+}

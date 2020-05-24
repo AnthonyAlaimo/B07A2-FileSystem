@@ -1,0 +1,26 @@
+package driver;
+
+import java.util.Scanner;
+
+public class Parser {
+  private boolean exitCheck;
+
+  public Parser() {
+    boolean exitCheck = false;
+    Scanner sc = new Scanner(System.in);
+    String input = sc.nextLine();
+    while (exitCheck == false)
+    {
+      if (input.equals("exit"))
+      {
+        Exit exit = new Exit();
+        exitCheck = exit.exitCalled();
+      } else {
+        CommandHistory.add_history(input);
+        Validator validate = new Validator(input);
+        input = sc.nextLine();
+      }
+    }
+    sc.close();
+  }
+}

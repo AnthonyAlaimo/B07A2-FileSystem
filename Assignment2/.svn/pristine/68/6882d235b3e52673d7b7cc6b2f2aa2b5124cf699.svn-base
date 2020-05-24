@@ -1,0 +1,22 @@
+package driver;
+
+import java.util.ArrayList;
+
+public class DirectoryStack {
+
+	// Arraylist of directories used for the stack
+	private static ArrayList<Directory> stack = new ArrayList<Directory>();
+
+	public static void push(Directory dir) {
+		// Push the given directory onto the stack at the beginning
+		stack.add(dir);
+	}
+	
+	public static Directory pop() {
+		// Pop the first directory in the stack off and set its value to a new
+		// directory
+		Directory popped = stack.remove(stack.size() - 1);
+		// Return the new directory
+		return popped;
+	}
+}

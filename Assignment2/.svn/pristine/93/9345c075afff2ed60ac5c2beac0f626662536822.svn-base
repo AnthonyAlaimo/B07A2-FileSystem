@@ -1,0 +1,74 @@
+package driver;
+
+public class Copy extends Command {
+	
+	private String documentation = "";
+
+	public String run_command(String input) {
+		// Remove extra spaces from input
+		input = input.trim().replaceAll(" +", " ");
+		// Split the input into OLDPATH and NEWPATH at the space
+		String[] inputs = input.split(" ");
+		// Find the desired Directory/File for OLDPATH
+		Object oldpath = FileSystem.pathToDirorFile(inputs[0]);
+		// Find the desired Directory/File for NEWPATH
+		Object newpath = FileSystem.pathToDirorFile(inputs[1]);
+		// If OLDPATH is a File
+		if (oldpath instanceof File) {
+			/* Call the copyFile method with OLDPATH and NEWPATH as its
+			 * parameters
+			 */
+			copyFile((File) oldpath, (Directory) newpath);
+		}
+		// Otherwise, meaning OLDPATH is a Directory
+		else {
+			/* Call the copyDir method with OLDPATH and NEWPATH as its
+			 * parameters
+			 */
+			copyDir((Directory) oldpath, (Directory) newpath);
+		}
+		return "";
+	}
+
+	public void copyDir(Directory oldpath, Directory newpath) {
+		// Create a new Directory with the same name as OLDPATH
+		Directory newdir = new Directory(oldpath.getName());
+		// Call the helper function, copy, with newpath, newdir and oldpath
+		copy(newpath, newdir, oldpath);
+	}
+	
+	public void copy(Directory parent, Directory child, Directory old) {
+		// Set child to be a subdirectory of parent
+		parent.addDirectory(child);
+		// For every subdirectory of the old
+		for (Directory d : old.getSubDirectories()) {
+			/* Recursively call this method with child, a new directory with
+			 * with the same name as the current subdirectory, and the current
+			 * subdirectory
+			 */
+			copy(child, new Directory(d.getName()), d);
+		}
+		// For every File of old
+		for (File f : old.getAllFiles()) {
+			// Call copyFile method with the old's Files and child
+			copyFile(f, child);
+		}
+	}
+	
+	public void copyFile(File oldpath, Directory newpath) {
+		// Create a new File
+		File newfile = new File();
+		// Make its text equal to the old file's text
+		newfile.setName(oldpath.getName());
+		// Make its name equal to the old file's name
+		newfile.setText(oldpath.getText());
+		// Set the newfile to be inside child
+		newpath.addFile(newfile);
+	}
+	
+	@Override
+	public String print_documentation() {
+		return(documentation);
+		
+	}
+}

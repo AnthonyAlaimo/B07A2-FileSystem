@@ -1,0 +1,50 @@
+// **********************************************************
+// Assignment2:
+// Student1:
+// UTORID user_name:
+// UT Student #:
+// Author:
+//
+// Student2:
+// UTORID user_name:
+// UT Student #:
+// Author:
+//
+// Student3:
+// UTORID user_name:
+// UT Student #:
+// Author:
+//
+// Student4:
+// UTORID user_name:
+// UT Student #:
+// Author:
+//
+//
+// Honor Code: I pledge that this program represents my own
+// program code and that I have coded on my own. I received
+// help from no one in designing and debugging my program.
+// I have also read the plagiarism section in the course info
+// sheet of CSC B07 and understand the consequences.
+// *********************************************************
+package driver;
+
+import java.util.Scanner;
+
+public class JShell {
+
+  public static void main(String[] args) {
+    // TODO Auto-generated method stub
+    FileSystem files = new FileSystem();
+    Command command = new Command();
+    command.commands.put("mkdir", new DirectoryMake());
+    command.commands.put("ls", new DirectoryList());
+    command.commands.put("cd", new DirectoryChange());
+    command.commands.put("history", new CommandHistory());
+    command.commands.put("pushd", new DirectoryPush());
+    command.commands.put("popd", new DirectoryStack());
+    command.commands.put("cat", new ViewFile());
+    command.commands.put("pwd", new DirectoryPath());
+    Parser parser = new Parser();
+  }
+}

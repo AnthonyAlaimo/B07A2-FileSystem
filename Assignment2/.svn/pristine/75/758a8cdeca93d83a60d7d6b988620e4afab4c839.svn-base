@@ -1,0 +1,9 @@
+Class Name: ChangeDirectory
+Parent Class(if any):
+Subclasses(if any):
+
+Responsibilities:
+* switch to the specified directory
+
+Collaborators:
+* Directory

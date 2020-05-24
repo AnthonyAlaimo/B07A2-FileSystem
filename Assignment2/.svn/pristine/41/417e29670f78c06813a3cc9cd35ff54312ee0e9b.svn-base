@@ -1,0 +1,95 @@
+package test;
+
+import static org.junit.Assert.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import org.junit.*;
+import driver.*;
+
+public class ViewFileTest {
+	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private final PrintStream originalOut = System.out;
+	static File file;
+	static File file2;
+	static File file3;
+	static Directory directory;
+	static Validator v;
+	static ViewFile cat;
+
+	@BeforeClass
+	public static void setUpClass() {
+		cat = new ViewFile();
+		file = new File("file1", "hey");
+		file2 = new File("file2", "hi");
+		file3 = new File("file3", "hello");
+		directory = new Directory("RandomDir");
+		FileSystem.getRoot().addDirectory(directory);
+		directory.addFile(file);
+		directory.addFile(file2);
+		directory.addFile(file3);
+		Command.add_Command("cat", cat);
+
+	}
+	@Before
+	public void setUpStream() {
+		// Make a new scanner before every test case
+		System.setOut(new PrintStream(outContent));
+	}
+	@After
+	public void setDown() {
+		System.setOut(originalOut);
+	}
+
+	@Test
+	public void testFileContent() {
+		System.setOut(new PrintStream(outContent));
+		System.out.println("cat /RandomDir/file1".split(" ")[0]);
+		v = new Validator("cat /RandomDir/file1".split(" "), "cat /RandomDir/file1");
+		Assert.assertEquals("file1: hey" + System.getProperty("line.separator"), outContent.toString());
+	}
+	@Test
+	// not working
+	public void testMultipleFileContent() {
+		System.setOut(new PrintStream(outContent));
+		System.out.println("cat /RandomDir/file1".split(" ")[0]);
+		v = new Validator("cat file1 file2 file 3".split(" "), "cat file1 file2 file3");
+		Assert.assertEquals("file1: hey \n\n\n file2: hi \n\n\n file3: hello"
+				+ System.getProperty("line.separator"), outContent.toString());
+	}
+	@Test
+	public void testInvalidFileName() {
+		/*
+		 * this test checks that a correct Error is given if a file name
+		 * that doesn't exist is inputed
+		 */
+		
+	}
+	@Test
+	public void testValidAndInvalidFileName() {
+		/*
+		 * this test checks that if multiple file names are given, the correct
+		 * file's contents will be printed out and an error will be returned
+		 * for the incorrect files
+		 */
+		
+	}
+	@Test
+	public void fileNotGiven() {
+		/*
+		 * this test checks that if the cat command is used without a file
+		 * an appropriate error will be returned
+		 */
+		
+	}
+	@Test
+	public void multipleFileFormat() {
+		/*
+		 * this test checks if multiple correct files are given then they will
+		 * be printed with correct format and spacing between one another.
+		 */
+		
+	}
+
+
+
+}

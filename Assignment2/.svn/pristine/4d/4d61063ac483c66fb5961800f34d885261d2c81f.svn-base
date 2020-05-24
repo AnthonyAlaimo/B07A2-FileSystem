@@ -1,0 +1,9 @@
+Class Name: Getter
+Parent Class(if any): Command
+Subclasses(if any): 
+
+Responsibilities:
+* Gets the files from an indicated URL
+
+
+Collaborators:

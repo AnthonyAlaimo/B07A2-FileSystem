@@ -1,0 +1,108 @@
+package driver;
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+/**
+ * This class represents the get command, which retrieves the contents of an indicated URL
+ * 
+ * @author Millan Khuran
+ */
+public class Getter extends Command {
+
+	private String fileContents;
+
+	/**
+	   * This method calls the get method with just the string input, not the whole get command
+	   * 
+	   * @param input, a string representing the input of a user, trying to use the get command.
+	   */
+	@Override
+	public String runCommand(String input) {
+		// store the contents of the file, from an indicated website
+		fileContents = readLink(input);
+		// get the name of the file and create a newFile with it
+		String fileName = input.substring(input.lastIndexOf("/")+1, 
+				input.length());
+		File file = new File(fileName, fileContents);
+		// add this file into the current directory of fileSystem
+		fs.getCurDir().addFile(file);
+		return "";
+	}
+	// TODO Auto-generated method stub
+
+	/**
+	   * This method takes a string input of a URL link and returns back the contents
+	   * of the files from the URl and adds it to the current working directory
+	   * 
+	   * @param input, a string representing a URL link
+	   * @return a String representing the contents retrieved from the indicated URL
+	   */
+	private String readLink(String input){
+		// adds an empty line inbetween files retrieved
+		fileContents = "\n";
+		URL oracle;
+		try {
+			/*
+			 *  Connects to a URL link and read the files it contains. Then
+			 *  the files are stored into a String into, which is read through
+			 *  one at a time
+			 */
+			oracle = new URL(input);
+			URLConnection connectURL = oracle.openConnection();
+			BufferedReader in = new BufferedReader(new InputStreamReader(connectURL.getInputStream()));
+			String inputLine;
+			// reads each file at a time until there are no files left to be read
+			while ((inputLine = in.readLine()) != null)
+				fileContents += inputLine + "\n";
+			in.close();
+		// catches exceptions
+		} catch (MalformedURLException e) {
+			ExceptionHandler.invalidURLException(input);
+		} catch (IOException e) {
+			ExceptionHandler.invalidURLException(input);
+		}
+		return fileContents;
+	}
+
+	@Override
+	public String printDocumentation() {
+		return null;
+		// TODO Auto-generated method stub
+
+	}
+
+}

@@ -1,0 +1,77 @@
+package driver;
+
+/**
+ * The main system that redirects output either to the console or to an
+ * OUTFILE
+ * @author ahmed323
+ *
+ */
+public class RedirectSystem {
+  /**
+   * variable reference to the class EchoAppend
+   */
+  private static EchoAppend redirectAppend = new EchoAppend();
+  
+  /**
+   * Variable reference to the class EchoFile
+   */
+  private static EchoFile redirectOverwrite = new EchoFile();
+  
+  /**
+   * Acts as the main hub for redirection. Decides where output goes to and
+   * whether or not a file gets output appended or overwritten.
+   * @param input: the original input of the user with separation on the
+   *               Command's syntax and the > or >> to OUTFILE.
+   * @param output: the result from the user's input command.
+   */
+  public static void redirectTo(String[] input, String output) {
+    /*
+     * depending on which echo command is being used, we call the necessary echo method.
+     * Additionally if the result is the empty string then this means the output
+     * did not want anything redirected to an OUTFILE.
+     */
+    if (output.equals("")) {
+    } else if (input[1].contains(">>")) {
+      // Call EchoAppend when syntax contains only >>
+      redirectAppend.echo(output,
+          input[1].substring(input[1].lastIndexOf(">>") + 3, input[1].length()));
+    } else if (input[1].contains(">")) {
+      // Call EchoFile when syntax contains only >
+      redirectOverwrite.echo(output,
+          input[1].substring(input[1].lastIndexOf(">") + 2, input[1].length()));
+    } else {
+      // Print to console when no redirection is found
+      System.out.println(output);
+    }
+  }
+  
+  /**
+   * static separating method that appropriately finds the > or >> that
+   * calls for the redirection of a command.
+   * @param input: the user input that hasnt been separated yet
+   * @return the separated user input depending on if > or >> exists.
+   */
+  public static String[] redirectionSeperator(String input) {
+    // Initialize variables.
+    String[] seperator = {"", ""};
+    Integer seperatorIndex = 0;
+    // Upper bound for >. If there exists more than two > symbols.
+    if (input.contains(">>>")) {
+      ExceptionHandler.invalidSyntaxException();
+    } else if (input.contains(">>")) {
+      // Separator whenever input contains >>
+      seperator[0] = input.substring(0, input.lastIndexOf(">>"));
+      seperator[1] = input.substring(input.lastIndexOf(">>")).trim();
+    } else if (input.contains(">")) {
+      // Seperator whenever input contains >
+      seperator[0] = input.substring(0, input.lastIndexOf(">"));
+      seperator[1] = input.substring(input.lastIndexOf(">")).trim();
+    } else {
+      // No separation when > or >> does not exist in the input.
+      seperator[0] = input;
+    }
+    // Return the separation back to Parser.
+    return seperator;
+  }
+
+}

@@ -1,0 +1,100 @@
+// **********************************************************
+// Assignment2:
+// Student1: Muizz Uddin Ahmed
+// UTORID user_name: ahmed323
+// UT Student #: 1004160043
+// Author:
+//
+// Student2: Nicholas Michael Gibson Elliott
+// UTORID user_name: ellio232
+// UT Student #: 1004416713
+// Author:
+//
+// Student3: Anthony Alaimo
+// UTORID user_name: alaimoa1
+// UT Student #: 1004421814
+// Author:
+//
+// Student4: Millan Singh Khurana
+// UTORID user_name: khuran53
+// UT Student #: 1004169259
+// Author:
+//
+//
+// Honor Code: I pledge that this program represents my own
+// program code and that I have coded on my own. I received
+// help from no one in designing and debugging my program.
+// I have also read the plagiarism section in the course info
+// sheet of CSC B07 and understand the consequences.
+// *********************************************************
+package driver;
+
+import java.util.Scanner;
+
+/**
+ * Takes input from the user, and then parses it and sends it to Validator.
+ * Keeps requesting input from the user until "exit" is inputed.
+ * 
+ * @author Millan Singh Khurana
+ *
+ */
+public class Parser {
+  
+  /**
+   * A boolean that represents whether the user has called "exit" or not.
+   */
+  private boolean exitCheck;
+  
+  /**
+   *  A list that will hold the split version of the user's input, and gets
+   *  sent to Validator
+   */
+  private String[] inputList;
+  
+  /**
+   * Uses a scanner to take input from the user, and then parse it into a more
+   * easily readable list and sends it to Validator. Keeps requesting input
+   * from the user until "exit" is inputed.
+   */
+  public Parser() {
+    boolean exitCheck = false;
+    // Creates a new scanner instance that is used to take in user input.
+    Scanner sc = new Scanner(System.in);
+    String input = "";
+    // Runs a loop while the user hasn't inputed "exit"
+    while (exitCheck == false)
+    {
+      // Prints out the formatting for the shell before the user's input.
+      System.out.print("/#: ");
+      /*
+       *  Sets the input string to the next line of input taken in by the
+       *  scanner.
+       */
+      input = sc.nextLine();
+      /*
+       * If the user has inputed exit it creates a new Exit class and calls
+       * exitCalled(). exitCheck is then set to the result of exitCalled()
+       * which is always true. This means that exitCheck becomes true and 
+       * results in stopping the while loop on the next run.
+       */
+      if (input.equals("exit"))
+      {
+        Exit exit = new Exit();
+        exitCheck = exit.exitCalled();
+      } else {
+        // Adds the inputed command to the command history
+        CommandHistory.add_history(input);
+        // Gets rid of any extraneous spaces on the front and back of the input
+        input = input.trim();
+        inputList = input.split(" ");
+        /*
+         *  Creates an instance of Validator to ensure that the user's input
+         *  is correctly formatted, and then calls the corresponding Command.
+         */
+        Validator validator = new Validator(inputList, input);
+
+      }
+    }
+    sc.close();
+  }
+}

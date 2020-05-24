@@ -1,0 +1,115 @@
+package driver;
+import java.util.List;
+import java.util.ArrayList;
+import driver.Directory;
+import driver.DirectoryMake;
+
+public class FileSystem {
+  private static Directory root = new Directory("/");
+  private static Directory cur_dir = root;
+  
+  public static Directory getRoot() {
+    return root;
+  }
+  
+  public static Directory get_cur_dir() {
+    return cur_dir;
+  }
+  
+  public static void set_cur_dir(Directory dir) {
+    boolean is_dir = false;
+    Directory temp_dir = dir;
+    while (temp_dir.get_Parent() != null && is_dir == false) {
+      if (temp_dir.get_Parent() == root) {
+        cur_dir = dir;
+        is_dir = true;
+      } else {
+        temp_dir = temp_dir.get_Parent();
+      }
+    }
+  }
+  
+  /**
+   * Finds directory at path. Path can be either relative to the current
+   * directory or may be a full path. if path is wrong or does not exist
+   * return none.
+   * 
+   * @param path: The string representation of the relative/full path.
+   */
+  public static Directory path_to_dir(String path) {
+    // Split dir names to their respective index
+    String[] dir_names = path.split("/"); int i = 0;
+    Directory temp_dir = null;
+    // Condition for path being a full path.
+    if (path.indexOf("/") == 0) {
+      temp_dir = FileSystem.getRoot(); i = 1;
+    }
+    // Condition for relative path being only the dir thats getting added.
+    else if(path.indexOf("/") == -1) {
+      return FileSystem.get_cur_dir();
+    }
+    // If both conditions fail, check if relative path exists.
+    else {
+      temp_dir = FileSystem.get_cur_dir(); i = 0;
+    }
+    Directory prev_dir = temp_dir;
+    // Compare each dir starting at root/cur_dir by matching dir names.
+    for (int name_indx = i; name_indx < dir_names.length; name_indx++) {
+      List<Directory> SubDirs = temp_dir.getSubDirectories();
+      for (Directory sub_dir : SubDirs) {
+        if (sub_dir.getName().equals(dir_names[name_indx])) {
+          temp_dir = sub_dir; break;
+        }
+      }
+      // If cond. to find out if the directory exists in FileSystem.
+      if (temp_dir == prev_dir) {
+        // return none if directory does not exist in FileSystem
+        break;
+      } else if (name_indx == dir_names.length - 1) {
+        // Return the directory at the end of the path if it exists.
+        return temp_dir;
+      } else {
+        prev_dir = temp_dir;
+      }
+    }
+    return null;
+  }
+  
+  
+  public static String tracePath(Directory dir, String path) {
+    if (dir.get_Parent() == null) {
+      return "";
+    } else {
+      path = (FileSystem.tracePath(dir.get_Parent(), path) + 
+              "/" + dir.getName());
+    }
+    return path;
+  }
+  
+  
+  public static void main(String[]Args) {
+    // Setting up Mock directory system for testing
+    Directory Users = new Directory("Users");
+    Directory Muizz = new Directory("Muizz");
+    Directory Nick = new Directory("Nick");
+    Directory Images = new Directory("Images");
+    Directory UjwalPics = new Directory("UjwalPics");
+    Directory Desktop = new Directory("Desktop");
+    Directory Abbas = new Directory("Abbas");
+    Users.addDirectory(Muizz);
+    Muizz.addDirectory(Images);
+    Images.addDirectory(UjwalPics);
+    Users.addDirectory(Nick);
+    root.addDirectory(Users);
+    Muizz.addDirectory(Desktop);
+    ArrayList<String> my_arr = new ArrayList();
+    FileSystem.set_cur_dir(Desktop);
+    my_arr.add("/Users/Nick/William");
+    my_arr.add("Muizz/Desktop/Games");
+    my_arr.add("Current_directory");
+    System.out.println(my_arr.toString());
+    DirectoryMake.mkdir(my_arr);
+    DirectoryList.ls(FileSystem.tracePath(FileSystem.get_cur_dir(), ""));
+  }
+
+}

@@ -1,0 +1,24 @@
+package driver;
+
+public class ViewFile {
+
+	//checks to see that the file the user gave is in the current directory
+	public void VerifyFileExist(File f) {
+		//Outline for code isn't a finished product
+		boolean verification = true;
+		if (verification == true) {
+			FileContents(f);
+		}
+		else {
+			System.out.println("Incorrect file name");
+		}
+	}
+
+	//prints the contents of the indicated file
+	public void FileContents(File f) {
+		String t = f.getText();
+		System.out.println(t);
+
+	}
+
+}

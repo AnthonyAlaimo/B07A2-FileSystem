@@ -1,0 +1,85 @@
+//**********************************************************
+//Assignment2:
+//Student1: Muizz Uddin Ahmed
+//UTORID user_name: ahmed323
+//UT Student #: 1004160043
+//Author:
+//
+//Student2: Nicholas Michael Gibson Elliott
+//UTORID user_name: ellio232
+//UT Student #: 1004416713
+//Author:
+//
+//Student3: Anthony Alaimo
+//UTORID user_name: alaimoa1
+//UT Student #: 1004421814
+//Author:
+//
+//Student4: Millan Singh Khurana
+//UTORID user_name: khuran53
+//UT Student #: 1004169259
+//Author:
+//
+//
+//Honor Code: I pledge that this program represents my own
+//program code and that I have coded on my own. I received
+//help from no one in designing and debugging my program.
+//I have also read the plagiarism section in the course info
+//sheet of CSC B07 and understand the consequences.
+//*********************************************************
+package test;
+
+import static org.junit.Assert.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import org.junit.*;
+import driver.*;
+
+public class DirectoryPathTest {
+  private static DirectoryPath pwd;
+  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+
+  @BeforeClass
+  public static void setUpBeforeClass() throws Exception {
+    pwd = new DirectoryPath();
+    Command.add_Command("pwd", pwd);
+  }
+  
+  @Before
+  public void setUpStream() {
+    // Make a new scanner before every test case
+    System.setOut(new PrintStream(outContent));
+  }
+  
+  @After
+  public void restoreStreams() {
+    // Destroy the old scanner after every test case
+      System.setOut(originalOut);
+  }
+  
+  @Test
+  public void testForInvalidPWDInput() {
+    String input = "pwd Un-needed input";
+    Validator v = new Validator(input.split(" "), input);
+    Assert.assertEquals("Invalid syntax for given Command. Check man COMMAND"
+        + System.getProperty("line.separator"), outContent.toString());
+   }
+  
+  @Test
+  public void testForRootPWD() {
+    FileSystem.set_cur_dir(FileSystem.getRoot());
+    Validator v = new Validator("pwd".split(" "), "pwd");
+    Assert.assertEquals("/"
+        + System.getProperty("line.separator"), outContent.toString());
+  }
+  
+  @Test
+  public void testForUpperCaseCall() {
+    FileSystem.set_cur_dir(FileSystem.getRoot());
+    Validator v = new Validator("PWD".split(" "), "PWD");
+    Assert.assertEquals("/"
+        + System.getProperty("line.separator"), outContent.toString());
+  }
+
+}

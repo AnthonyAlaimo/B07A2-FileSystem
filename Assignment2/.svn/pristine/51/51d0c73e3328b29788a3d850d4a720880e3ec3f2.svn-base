@@ -1,0 +1,85 @@
+package test;
+
+import static org.junit.Assert.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import org.junit.*;
+import driver.*;
+
+public class EchoFileTest {
+	private final ByteArrayOutputStream outContent = 
+			new ByteArrayOutputStream();
+	private final PrintStream originalOut = System.out;
+	//
+	private static File file;
+	private static Directory directory;
+	private static EchoFile echo;
+	private static Validator valid;
+	
+	@BeforeClass
+	public static void setUp() {
+		file = new File("file", "hi");
+		directory = new Directory("RandomDir");
+		FileSystem.getRoot().addDirectory(directory);
+		directory.addFile(file);
+		echo = new EchoFile();
+		Command.add_Command("echo", echo);
+		
+	}
+	@Before
+	public void setUpStream() {
+		// Make a new scanner before every test case
+		System.setOut(new PrintStream(outContent));
+	}
+	@After
+	public void setDown() {
+		System.setOut(originalOut);
+	}
+	@Test
+	public void fileOverwrite() {
+		FileSystem.setCurDir(directory);
+		String input = "echo \"hey\" > /RandomDir/file";
+	    Validator valid = new Validator(input);
+	    String expectedOutput = "hey";
+	    Assert.assertEquals(expectedOutput, file.getText());
+	}
+	@Test
+	public void printString() {
+		String input = "echo \"hello\"";
+	    Validator valid = new Validator(input);
+	    String expectedOutput = "hello\n";
+	    Assert.assertEquals(expectedOutput , outContent.toString());
+	}
+	@Test
+	public void fileAppend() {
+		FileSystem.setCurDir(directory);
+		String input = "echo \"hey\" >> /RandomDir/file";
+	    Validator valid = new Validator(input);
+	    String expectedOutput = "heyhey";
+	    Assert.assertEquals(expectedOutput, file.getText());
+	}
+	@Test
+	public void invalidStringSyntax() {
+		String input = "echo hey";
+	    Validator valid = new Validator(input);
+	    String expectedOutput = 
+	    		"Error: Invalid syntax for echo. Check man echo\n";
+	    Assert.assertEquals(expectedOutput, outContent.toString());
+	}
+	@Test
+	public void newFileExistInCorrectDir() {
+		String input = "echo \"hey\" > file5";
+	    Validator valid = new Validator(input);
+	    File expectedOutput = FileSystem.getCurDir().getFile("file5");
+	    Assert.assertTrue(expectedOutput instanceof File);
+	}
+	@Test
+	public void testSpaces() {
+		String input = "echo          \"coolStuff\"    >>       file";
+		valid = new Validator(input);
+	    String expectedOutput = "heyheycoolStuff";
+	    Assert.assertEquals(expectedOutput, file.getText());
+		
+	}
+}
+

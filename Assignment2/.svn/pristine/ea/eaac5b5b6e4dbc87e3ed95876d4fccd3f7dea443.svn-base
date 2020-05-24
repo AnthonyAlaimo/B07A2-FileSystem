@@ -1,0 +1,11 @@
+Class Name: DirectoryPath
+Parent Class(if any):
+Subclasses(if any):
+
+Responsibilities:
+* Prints the current directory and the path leading to it
+
+Collaborators:
+* JShell
+* Directory
+* FileSystem

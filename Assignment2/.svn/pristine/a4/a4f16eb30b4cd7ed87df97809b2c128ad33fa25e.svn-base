@@ -1,0 +1,31 @@
+package driver;
+
+public class EchoFile {
+	public static void echo(String text, String file) {
+		// once validation is complete this is used to see if the file exist
+		if (Validator.valid_file(FileSystem.get_cur_dir(), file) == true) {
+			// sets the text of the indicated file with the new indicated string
+			for (File f:FileSystem.get_cur_dir().getAllFiles()) {
+				if (f.getName() == file) {
+					f.setText(text);
+					break;
+				}
+			}
+		}
+		else if (Validator.valid_file(FileSystem.get_cur_dir(), file) != true){
+			// if file doesn't exist, we append text to a new file 
+			String name = file.toString();
+			File f = new File(text, name);
+			FileSystem.get_cur_dir().addFile(f);
+		}
+		else {
+			//TODO exception handler class called for correct exception
+		}
+	}
+	
+	// if no file is given, print the text onto the shell
+	public void echo(String text) {
+		System.out.println(text);
+	}
+
+}

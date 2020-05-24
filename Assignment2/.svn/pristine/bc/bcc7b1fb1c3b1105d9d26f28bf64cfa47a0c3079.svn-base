@@ -1,0 +1,129 @@
+// **********************************************************
+// Assignment2:
+// Student1: Muizz Uddin Ahmed
+// UTORID user_name: ahmed323
+// UT Student #: 1004160043
+// Author:
+//
+// Student2: Nicholas Michael Gibson Elliott
+// UTORID user_name: ellio232
+// UT Student #: 1004416713
+// Author:
+//
+// Student3: Anthony Alaimo
+// UTORID user_name: alaimoa1
+// UT Student #: 1004421814
+// Author:
+//
+// Student4: Millan Singh Khurana
+// UTORID user_name: khuran53
+// UT Student #: 1004169259
+// Author:
+//
+//
+// Honor Code: I pledge that this program represents my own
+// program code and that I have coded on my own. I received
+// help from no one in designing and debugging my program.
+// I have also read the plagiarism section in the course info
+// sheet of CSC B07 and understand the consequences.
+// *********************************************************
+package driver;
+
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+/**
+ * This class represents the load command, which loads a saved fileSystem back to its former state
+ * 
+ * @author Millan Khuran
+ */
+public class Loader extends Command{
+  
+  /**
+   * Stores the documentation for the command Load.
+   */
+  private static final String documentation =
+      (" Description:\n--------------------------------------------\n\t"
+          + "Loads a previously saved state contianed in an XML save on the"
+          + "\n\tUser's actual FileSystem so the user can start back at\n\t"
+          + "where the user previously stopped in the saved file. NOTE: the u"
+          + "\n\tser can only use load at the start of JShell only.\n"
+          + " Syntax:\n--------------------------------------------\n\t"
+          + "/#: load PATH \n\tWhere PATH is an ACTUAL path in the FileSyste"
+          + "m.\n Possible "
+          + "Exceptions:\n--------------------------------------------\n\tinva"
+          + "lidPathException, invalidSyntaxException, invalidNameException");
+
+
+	/**
+	   * This method calls the load method with just the string input, not the whole load command
+	   * 
+	   * @param input, a string representing the input of a user, trying to use the load command.
+	   */
+	@Override
+	public String runCommand(String input){
+		/*
+		 *  If the command history is empty, this means no current FileSystem is active
+		 *  and we can load the previously saved fileSystem. Otherwise an error
+		 *  will be given
+		 */
+		if(CommandHistory.getCommandHistory().size() == 0) {
+			loadCommands(input);
+		}else{
+			ExceptionHandler.invalidLoadCall();
+		}
+		return "";
+	}
+
+	/**
+	   * This method takings a path to a saved file of a fileSystem and loads 
+	   * that fileSystem
+	   * 
+	   * @param input, a string representing a path leading to the saved file
+	   * @return a String representing the contents retrieved from the indicated URL
+	   */
+	private void loadCommands(String input){
+		// stores all the commands done in the saved FileSystem
+		List<String> commandList = new ArrayList<String>();
+		File file = new File(input);
+		try {
+			// reads the lines of the saved file and blocks unnecessary output from the console
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String command;
+			PrintStream originalStream = System.out;
+			PrintStream temporaryStream = new PrintStream(new OutputStream(){
+				public void write(int b) {
+				}
+			});
+			System.setOut(temporaryStream);
+			// reads each like of commands and adds them to the command history of the loaded fileSystem
+			while ((command = reader.readLine()) != null) {
+				if (command.split(" ")[0].equals("save")) {
+					CommandHistory.addHistory(command);
+				}else {
+					Validator validator = new Validator(command);
+				}
+			}
+			System.setOut(originalStream);
+		// catches exceptions 
+		} catch (FileNotFoundException e) {
+			ExceptionHandler.invalidComputerFileName(input);
+
+		} catch (IOException e) {
+			ExceptionHandler.unreadableFile();
+		}
+	}
+
+	@Override
+	public String printDocumentation() {
+		return documentation;
+	}
+
+}

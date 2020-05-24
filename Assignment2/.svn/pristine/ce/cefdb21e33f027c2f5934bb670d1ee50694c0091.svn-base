@@ -1,0 +1,23 @@
+package driver;
+
+public class EchoAppend{
+	public void echo(String text, String path) {
+		Object parentDir = FileSystem.pathToDirorFile(path.substring(0, path.lastIndexOf("/")));
+		if(parentDir instanceof Directory){
+			String name = path.substring(path.lastIndexOf("/") + 1);
+			File f = ((Directory)parentDir).getFile(name);
+			if (f instanceof File){
+				// gets the current texts of the indicated file
+				String currentStr = f.getText();
+				// combines the current text with the new indicated string
+				// sets the text of the indicated file to the new combined string.
+				f.setText(currentStr + text);
+			}
+			else {
+				File newfile = new File(text, name);
+				((Directory)parentDir).addFile(newfile);
+			}
+		}
+	}
+
+}

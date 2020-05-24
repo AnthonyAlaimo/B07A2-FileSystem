@@ -1,0 +1,95 @@
+package test;
+
+import static org.junit.Assert.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import org.junit.*;
+import driver.*;
+
+public class CommandHistoryTest {
+  private static CommandHistory history;
+  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+  private final PrintStream originalOut = System.out;
+
+
+  @BeforeClass
+  public static void setUpBeforeClass() throws Exception {
+    history = new CommandHistory();
+    Command.add_Command("history", history);
+  }
+  
+  @Before
+  public void setUpStream() {
+    // Make a new scanner before every test case
+    System.setOut(new PrintStream(outContent));
+  }
+  
+  @After
+  public void restoreStreams() {
+    // Destroy the old scanner after every test case
+      System.setOut(originalOut);
+  }
+  
+  @Test
+  public void testForViewingAlotOfHistory() {
+    String input = "history";
+    String[] Histor = {"testcase", "Jibberish", "mkdir", "pwd failure", "zzz"};
+    for (String old_input: Histor) {
+      CommandHistory.add_history(old_input);
+    }
+    CommandHistory.add_history(input);
+    Validator v = new Validator(input.split(" "), input);
+    Assert.assertEquals("1.testcase\r\n" + 
+        "2.Jibberish\r\n" + 
+        "3.mkdir\r\n" + 
+        "4.pwd failure\r\n" + 
+        "5.zzz\r\n" + 
+        "6.history"
+        + System.getProperty("line.separator"), outContent.toString());
+  }
+  
+  @Test
+  public void testForTruncatedHistory() {
+    String input = "history 3";
+    Validator v = new Validator(input.split(" "), input);
+    Assert.assertEquals("4.pwd failure\r\n" + 
+        "5.zzz\r\n" + 
+        "6.history"
+        + System.getProperty("line.separator"), outContent.toString());
+  }
+  
+  @Test
+  public void testForTruncateHigherThanCommandHistorySize() {
+    String input = "history 100";
+    Validator v = new Validator(input.split(" "), input);
+    Assert.assertEquals("1.testcase\r\n" + 
+        "2.Jibberish\r\n" + 
+        "3.mkdir\r\n" + 
+        "4.pwd failure\r\n" + 
+        "5.zzz\r\n" + 
+        "6.history"
+        + System.getProperty("line.separator"), outContent.toString());
+  }
+  
+  @Test
+  public void testFoInvalidSyntaxOfTruncateHistory() {
+    String input = "history again";
+    Validator v = new Validator(input.split(" "), input);
+    Assert.assertEquals("Invalid syntax for given Command. Check man COMMAND"
+        + System.getProperty("line.separator"), outContent.toString());
+  }
+  
+  @Test
+  public void testForUpperCaseCommandCall() {
+    String input = "HISTORY";
+    Validator v = new Validator(input.split(" "), input);
+    Assert.assertEquals("1.testcase\r\n" + 
+        "2.Jibberish\r\n" + 
+        "3.mkdir\r\n" + 
+        "4.pwd failure\r\n" + 
+        "5.zzz\r\n" + 
+        "6.history"
+        + System.getProperty("line.separator"), outContent.toString());
+  }
+
+}

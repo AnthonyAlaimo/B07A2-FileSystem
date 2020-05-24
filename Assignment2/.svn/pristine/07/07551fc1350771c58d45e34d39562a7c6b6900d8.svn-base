@@ -1,0 +1,33 @@
+package driver;
+
+import java.util.Scanner;
+
+public class Parser {
+  private boolean exitCheck;
+  private String[] inputList;
+  private String pathPrint;
+
+  public Parser() {
+    boolean exitCheck = false;
+    Scanner sc = new Scanner(System.in);
+    String input = "";
+    while (exitCheck == false)
+    {
+      pathPrint = FileSystem.tracePath(FileSystem.get_cur_dir(),"");
+      System.out.print(pathPrint + ": ");
+      input = sc.nextLine();
+      if (input.equals("exit"))
+      {
+        Exit exit = new Exit();
+        exitCheck = exit.exitCalled();
+      } else {
+        CommandHistory.add_history(input);
+        input = input.trim().replaceAll(" +", " ");
+        inputList = input.split(" ");
+        Validator validator = new Validator(inputList, input);
+        
+      }
+    }
+    sc.close();
+  }
+}
